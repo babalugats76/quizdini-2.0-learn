@@ -1,0 +1,32 @@
+.logo-spinner {
+  width: 200px;
+  -webkit-animation: spin 5s infinite linear; /* Safari 4+ */
+  -moz-animation: spin 5s infinite linear; /* Fx 5+ */
+  -o-animation: spin 5s infinite linear; /* Opera 12+ */
+  animation: spin 5s infinite linear; /* IE 10+, Fx 29+ */
+}
+
+@-moz-keyframes spin {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,38 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class NotFound extends Component {
+  constructor(props) {
+    super(props);
+    const { location: { state: { message } = {} } = {}, history } = this.props;
+    this.state = { message };
+    history.replace({ pathname: '/404', state: {} });
+  }
+
+  componentDidMount() {
+    const pageTitle = [
+      process.env.REACT_APP_WEBSITE_NAME,
+      'Not Found (404)'
+    ].join(' | ');
+    document.title = pageTitle;
+  }
+
+  render() {
+    const { message: { content = '', header = '' } = {} } = this.state;
+    return (
+      <div className="game-wrapper">
+        <div id="notfound" className="fixed-center">
+          {header && <h1>{header}</h1>}
+          {content && <div>{content}</div>}
+        </div>
+      </div>
+    );
+  }
+}
+
+NotFound.propTypes = {
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
+};
+
+export default NotFound;

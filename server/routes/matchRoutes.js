@@ -1,0 +1,19 @@
+const mongoose = require('mongoose');
+const Match = mongoose.model('matches');
+
+module.exports = app => {
+  app.get('/api/match/:id', async (req, res, next) => {
+    try {
+      let match = await Match.findOne({
+        matchId: req.params.id
+      }).populate('user_id', 'title firstName lastName author', 'users');
+      if (!match) return res.send({}); // empty object signifies not found
+      match = match.toJSON(); // convert to POJO
+      match.author = match.user_id.author; // map author
+      delete match.user_id; // remove populated user object
+      res.send(match);
+    } catch (e) {
+      next(e);
+    }
+  });
+};
