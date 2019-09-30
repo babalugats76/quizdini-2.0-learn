@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CircularProgressbar from 'react-circular-progressbar';
+import { CircularProgressbar } from 'react-circular-progressbar';
 
 import GameTransition from '../UI/GameTransition';
 
@@ -19,13 +19,12 @@ class Timer extends Component {
     setTimeout(() => this.startTimer(), this.props.wait);
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentDidUpdate(nextProps, nextState) {
     if (
       nextProps.correct !== this.props.correct ||
       nextProps.incorrect !== this.props.incorrect
     ) {
-      console.log('Score change detected...');
-      const success = nextProps.correct > this.props.correct ? true : false;
+      const success = nextProps.correct < this.props.correct ? true : false;
       this.setState((state, props) => {
         return {
           showTransition: true,
@@ -121,11 +120,10 @@ class Timer extends Component {
               <div className="timer-wrapper">
                 <div className="progress-bar-wrapper">
                   <CircularProgressbar
-                    initialAnimation
                     background
                     classes={classes}
                     counterClockwise
-                    percentage={percent}
+                    value={percent}
                     strokeWidth={4}
                     styles={{
                       trail: {
