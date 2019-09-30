@@ -3,22 +3,15 @@
 # Todo List
 
 - Client
-  - Switch dangerousInnerHtml render to new method; remove conditional html check
-  - Helmet - dynamic title integration
-  - Implement react router switch including "Not Found"
-    - Figure out where to put redirect logic, etc.
   - MatchGame
     - Add modern game logo
   - Match
     - Cleanup CSS
-  - Splash
-    - Create component that uses Modal UI component
-    - Create Splash component that uses `Modal` dialog component
-  - Modal
-    - Refine `Modal` component
-      - style
+  - Refine Splash
+  - Refine Modal
 
 - Kay Items
+  - Draft RFP for Kay
   - Colors
   - Fonts
     - Term / Definition / Monospace (When code)
