@@ -16,29 +16,41 @@ const MatchSplash = ({
   return (
     <Modal handleClose={onGameStart} show={showSplash}>
       <div id="splash">
-        <img id="game-logo" src={logo} alt="Quizdini Logo" />
-        <div id="title">{title}</div>
-        <div id="author">{author}</div>
-        <div id="options">
-          {itemsPerBoard} items per board &bull; {duration} seconds
-        </div>
-        {showResults ? (
-          <div id="score">
-            <span className="circle">
-              <span className="circle-text">{score}</span>
+        <section id="splash-banner">
+          <img
+            className="game-banner"
+            src="https://loremflickr.com/800/250"
+            alt="Awesome Quizdini Match Banner Goes Here..."
+          />
+        </section>
+        <section id="splash-details">
+          <div className="title">{title}</div>
+          <div className="author">{author}</div>
+          {showResults && (
+            <div id="score">
+              <span className="circle">
+                <span className="circle-text">{score}</span>
+              </span>
+            </div>
+          )}
+          <div id="options">
+            <span className="items-per-board">
+              {itemsPerBoard} items per board
             </span>
+            <span className="duration">{duration} seconds</span>
           </div>
-        ) : (
-          <div id="instructions">{instructions}</div>
-        )}
-        <button
-          id="play"
-          onClick={onGameStart}
-          onKeyPress={onGameStart}
-          tabIndex={1}
-        >
-          {showResults ? 'Play Again' : 'Play Game'}
-        </button>
+          {!showResults && <div className="instructions">{instructions}</div>}
+        </section>
+        <section id="splash-footer">
+          <button
+            id="play"
+            onClick={onGameStart}
+            onKeyPress={onGameStart}
+            tabIndex={1}
+          >
+            {showResults ? 'Play Again' : 'Play Game'}
+          </button>
+        </section>
       </div>
     </Modal>
   );

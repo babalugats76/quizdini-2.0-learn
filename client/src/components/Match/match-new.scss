@@ -108,60 +108,85 @@ button {
 /*********** BEGIN SPLASH ***********/
 #splash {
   display: flex;
+  flex-direction: column;
   border-radius: 10px;
+  overflow: hidden;
   background-color: white;
   color: #343434;
-  flex-direction: column;
-  padding: 1em;
-  > * {
-    flex: 1 1 auto;
-    margin: 0.1em;
-    padding: 0.1em;
-    line-height: 1.3;
-  }
-  button#play {
-    font-size: 1.6em;
-    padding: 0.5em;
-    margin: 1em 0.5em 0.5em;
-    border-radius: 10px;
-    transition: background-color 300ms linear;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    &:hover,
-    &:active,
-    &:focus {
-      background-color: rgba(255, 94, 91, 1); /* #FF5E5B */
-      color: white;
+
+  #splash-banner {
+    .game-banner {
+      width: 100%;
+      height: auto;
+      padding: 0;
+      margin: 0;
     }
   }
-  #game-logo {
-    margin: 0 auto;
-    max-width: 125px;
-    height: auto;
-    width: 100%;
-  }
-  #title {
-    font-size: 2em;
-  }
-  #score {
-    /*font-weight: bold;*/
-    font-size: 3em;
-    margin: 0.5em 0.5em 0.2em;
-    .circle {
-      display: inline-block;
-      line-height: 0px;
-      border-radius: 50%;
-      border: 2px solid $black-alpha1;
-      background-color: $gray-light-light;
-      padding: 0.3em;
-      .circle-text {
+
+  #splash-details {
+    background-color: rgba(255,255,255,.3);
+    margin: 1em 0;
+    padding: 0 1.3em;
+    line-height: 1.3;
+    .title {
+      font-size: 2em;
+      padding-bottom: 0.2em;
+    }
+    .author,
+    #options,
+    .instructions {
+      color: #777;
+    }
+    .author {
+      font-size: 1.1em;
+      padding-bottom: .5em;
+    }
+    #options {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      padding: .5em 0;
+    }
+    #score {
+      /*font-weight: bold;*/
+      font-size: 4.4em;
+      margin: 0.2em;
+      .circle {
         display: inline-block;
-        padding-top: 50%;
-        padding-bottom: 50%;
-        margin-left: 8px;
-        margin-right: 8px;
-        color: #343434;
-        /*font-family: $helsinki;*/
+        line-height: 0px;
+        border-radius: 50%;
+        border: 2px solid $black-alpha1;
+        background-color: $gray-light-light;
+        padding: 0.3em;
+        .circle-text {
+          display: inline-block;
+          padding-top: 50%;
+          padding-bottom: 50%;
+          margin-left: 8px;
+          margin-right: 8px;
+          color: #343434;
+          /*font-family: $helsinki;*/
+        }
+      }
+    }
+  }
+  #splash-footer {
+    padding: 0.75em;
+    background-color: plum;
+    button#play {
+      font-size: 1.5em;
+      padding: 0.3em 0.5em;
+      border-radius: 10px;
+      transition: background-color 300ms linear;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      width: 100%;
+      max-width: 20em;
+      &:focus,
+      &:hover,
+      &:active {
+        background-color: rgba(255, 94, 91, 1); /* #FF5E5B */
+        color: white;
       }
     }
   }

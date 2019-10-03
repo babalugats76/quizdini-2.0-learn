@@ -26,6 +26,8 @@
   top: 50%;
   left: 50%;
   height: auto;
+  width: 100%;
+  max-width: 32em;
   z-index: 2000;
   visibility: hidden;
   backface-visibility: hidden;
@@ -59,28 +61,4 @@
   opacity: 1;
   visibility: visible;
   background-color: rgba(0, 0, 0, 0.5);
-}
-
-/* mobile-ish breakpoint */
-@media screen and (max-width: 48em) {
-  .modal {
-    min-width: 20em;
-    max-width: 90%;
-  }
-}
-
-/* tablet-ish breakpoint */
-@media screen and (min-width: 48em) and (max-width: 75em) {
-  .modal {
-    min-width: 30em;
-    max-width: 40em;
-  }
-}
-
-/* desktop-ish breakpoint */
-@media screen and (min-width: 75em) {
-  .modal {
-    min-width: 30em;
-    max-width: 50%;
-  }
 }

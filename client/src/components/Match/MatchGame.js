@@ -27,7 +27,6 @@ const CustomHTML5toTouch = {
 };
 
 class MatchGame extends Component {
-  
   /* TODO - Document somewhere and remove */
   /*static HAS_HTML = new RegExp('<[^>]*>');*/
 
@@ -38,7 +37,8 @@ class MatchGame extends Component {
   constructor(props) {
     super(props);
     const { id, title, instructions, author, matches } = this.props.game || {};
-    const { duration, itemsPerBoard } = this.props.game.options || {};
+    const { duration = 180, itemsPerBoard = 9, colorScheme = 'mono' } =
+      this.props.game.options || {};
     const matchDeck = this.transformData(matches);
     this.state = {
       id,
@@ -47,6 +47,7 @@ class MatchGame extends Component {
       instructions,
       itemsPerBoard,
       duration,
+      colorScheme,
       playing: false,
       showSplash: true,
       showBoard: false,
@@ -71,17 +72,20 @@ class MatchGame extends Component {
     return matches.map(match => {
       return {
         ...match,
-        id: shortid.generate(),
+        id: shortid.generate()
       };
     });
   }
 
   /**
-   * Assign random application color to each match
+   * Assign color to matches
+   * Will be used downstream to assign style classes, etc.
+   *
    * @param {Array} matches - Array of match objects to assign color
+   * @param {string} colorScheme - Game color scheme, i.e., 'mono', 'rainbow'
    */
-  addColor(matches) {
-    const colors = [
+  addColor(matches, colorScheme) {
+    let colors = [
       'red',
       'orange',
       'yellow',
@@ -95,14 +99,26 @@ class MatchGame extends Component {
       'gray',
       'teal'
     ];
-    return matches.map(match => {
-      return {
-        ...match,
-        show: false,
-        matched: false
-        //color: colors[Math.floor(Math.random() * colors.length)]
-      };
-    });
+
+    switch (colorScheme) {
+      case 'rainbow':
+        return matches.map(match => {
+          let rand = Math.floor(Math.random() * colors.length);
+          let color = colors[rand];
+          colors.splice(rand, 1);
+          return {
+            ...match,
+            color
+          };
+        });
+      default:
+        return matches.map(match => {
+          return {
+            ...match,
+            color: ''
+          };
+        });
+    }
   }
 
   /**
@@ -192,14 +208,16 @@ class MatchGame extends Component {
 
   /**
    * Shuffle the match deck
-   * Picks subset of matches
-   * Randomly assign color to each term
+   * Pick subset of matches
+   * Add/Set additional "flags" needed by game, e.g., `show`, `matched`
+   * Apply color scheme, i.e., assign color classes to game terms "tiles"
    * Shuffle terms and definitions, i.e., generate array of random indices
    * Calculates unmatched
    * Update related state items
    */
   dealMatches = () => {
     this.setState((state, props) => {
+      console.log('color scheme', state.colorScheme);
       console.log(state.matchDeck);
       const matchDeck = shuffleArray(state.matchDeck);
       console.log('shuffling match deck');
@@ -208,7 +226,10 @@ class MatchGame extends Component {
         0,
         Math.min(state.itemsPerBoard, matchDeck.length)
       );
-      matches = this.addColor(matches);
+      matches = matches.map(match => {
+        return { ...match, show: false, matched: false };
+      });
+      matches = this.addColor(matches, state.colorScheme);
       const termOrder = this.getTermOrder(matches);
       const definitionOrder = this.getDefinitionOrder(matches);
       const unmatched = definitionOrder.length;
