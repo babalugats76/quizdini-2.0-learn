@@ -33,6 +33,7 @@
   visibility: hidden;
   backface-visibility: hidden;
   transform: translateX(-50%) translateY(-50%);
+  overflow: auto;
 }
 
 .modal-content {

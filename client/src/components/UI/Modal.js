@@ -13,37 +13,32 @@ const transitionStyles = {
     opacity: 0,
     transform: 'scale(.7)',
     boxShadow: 'none',
-    transition: `all ${timeout.enter}ms`,
-    overflow: 'hidden'
+    transition: `all ${timeout.enter}ms`
   },
   entering: {
     opacity: 0,
     transform: 'scale(.7)',
     backgroundShadow: 'none',
     transition: `all ${timeout.enter}ms`,
-    boxShadow: '10px 10px 45px 0px rgba(0, 0, 0, 0.0)',
-    overflow: 'hidden'
+    boxShadow: '10px 10px 45px 0px rgba(0, 0, 0, 0.0)'
   },
   entered: {
     transition: `opacity ${timeout.enter}ms cubic-bezier(0.25, 0.5, 0.5, 0.9), transform ${timeout.enter}ms cubic-bezier(0.25, 0.5, 0.5, 0.9)`,
     opacity: 1.0,
     visibility: 'visible',
     transform: 'scale(1)',
-    boxShadow: '10px 10px 45px 0px rgba(0, 0, 0, 0.3)',
-    overflow: 'auto'
+    boxShadow: '10px 10px 45px 0px rgba(0, 0, 0, 0.3)'
   },
   exiting: {
     transition: `opacity ${timeout.exit}ms cubic-bezier(0.25, 0.5, 0.5, 0.9), transform ${timeout.exit}ms cubic-bezier(0.25, 0.5, 0.5, 0.9)`,
     transform: 'scale(.7)',
     visibility: 'visible',
-    boxShadow: 'none',
-    overflow: 'hidden'
+    boxShadow: 'none'
   },
   exited: {
     visibility: 'hidden',
     opacity: 0,
-    boxShadow: 'none',
-    overflow: 'hidden'
+    boxShadow: 'none'
   }
 };
 
