@@ -380,7 +380,7 @@ class MatchGame extends Component {
         />
         <div id="match-game">
           <MatchBoard
-            wait={300}
+            wait={500}
             show={showBoard}
             playing={playing}
             matches={matches}
