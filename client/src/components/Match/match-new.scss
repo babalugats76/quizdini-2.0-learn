@@ -254,7 +254,8 @@ button {
 /*********** BEGIN MATCH ***********/
 
 .game-wrapper {
-  height: 100vh;
+  /*height: 100vh;*/
+  height: 100%;
   width: 100%;
   position: relative;
   background-color: purple;
@@ -533,7 +534,7 @@ button {
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    min-height: calc((100vh / 3) - 2em);
+    /*min-height: calc((100vh / 3) - 2em);*/
     padding: 0.5em;
     margin: 0 auto;
     align-content: center;
@@ -625,7 +626,7 @@ button {
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    min-height: calc((100vh / 2) - 2em);
+    /*min-height: calc((100vh / 2) - 2em);*/
     padding: 0.5em;
     margin: 0 auto;
     align-content: center;
