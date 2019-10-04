@@ -1,57 +1,57 @@
-@import './variables';
-@import './mixins';
+@import "./variables";
+@import "./mixins";
 
-@include font-face($helsinki, '/fonts/helsinki-webfont');
+@include font-face($helsinki, "/fonts/helsinki-webfont");
 
 /* lexend-deca-regular - latin */
 @font-face {
-  font-family: 'Lexend Deca';
+  font-family: "Lexend Deca";
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/lexend-deca-v1-latin-regular.eot'); /* IE9 Compat Modes */
-  src: local('Lexend Deca Regular'), local('LexendDeca-Regular'),
-    url('/fonts/lexend-deca-v1-latin-regular.eot?#iefix')
-      format('embedded-opentype'),
-    /* IE6-IE8 */ url('/fonts/lexend-deca-v1-latin-regular.woff2')
-      format('woff2'),
-    /* Super Modern Browsers */ url('/fonts/lexend-deca-v1-latin-regular.woff')
-      format('woff'),
-    /* Modern Browsers */ url('/fonts/lexend-deca-v1-latin-regular.ttf')
-      format('truetype'),
+  src: url("/fonts/lexend-deca-v1-latin-regular.eot"); /* IE9 Compat Modes */
+  src: local("Lexend Deca Regular"), local("LexendDeca-Regular"),
+    url("/fonts/lexend-deca-v1-latin-regular.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("/fonts/lexend-deca-v1-latin-regular.woff2")
+      format("woff2"),
+    /* Super Modern Browsers */ url("/fonts/lexend-deca-v1-latin-regular.woff")
+      format("woff"),
+    /* Modern Browsers */ url("/fonts/lexend-deca-v1-latin-regular.ttf")
+      format("truetype"),
     /* Safari, Android, iOS */
-      url('/fonts/lexend-deca-v1-latin-regular.svg#LexendDeca') format('svg'); /* Legacy iOS */
+      url("/fonts/lexend-deca-v1-latin-regular.svg#LexendDeca") format("svg"); /* Legacy iOS */
 }
 
 /* ibm-plex-mono-regular - latin */
 @font-face {
-  font-family: 'IBM Plex Mono';
+  font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/ibm-plex-mono-v5-latin-regular.eot'); /* IE9 Compat Modes */
-  src: local('IBM Plex Mono'), local('IBMPlexMono'),
-    url('/fonts/ibm-plex-mono-v5-latin-regular.eot?#iefix')
-      format('embedded-opentype'),
-    /* IE6-IE8 */ url('/fonts/ibm-plex-mono-v5-latin-regular.woff2')
-      format('woff2'),
+  src: url("/fonts/ibm-plex-mono-v5-latin-regular.eot"); /* IE9 Compat Modes */
+  src: local("IBM Plex Mono"), local("IBMPlexMono"),
+    url("/fonts/ibm-plex-mono-v5-latin-regular.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("/fonts/ibm-plex-mono-v5-latin-regular.woff2")
+      format("woff2"),
     /* Super Modern Browsers */
-      url('/fonts/ibm-plex-mono-v5-latin-regular.woff') format('woff'),
-    /* Modern Browsers */ url('/fonts/ibm-plex-mono-v5-latin-regular.ttf')
-      format('truetype'),
+      url("/fonts/ibm-plex-mono-v5-latin-regular.woff") format("woff"),
+    /* Modern Browsers */ url("/fonts/ibm-plex-mono-v5-latin-regular.ttf")
+      format("truetype"),
     /* Safari, Android, iOS */
-      url('/fonts/ibm-plex-mono-v5-latin-regular.svg#IBMPlexMono') format('svg'); /* Legacy iOS */
+      url("/fonts/ibm-plex-mono-v5-latin-regular.svg#IBMPlexMono") format("svg"); /* Legacy iOS */
 }
 
 @font-face {
-  font-family: 'Fira Code';
+  font-family: "Fira Code";
   font-style: normal;
   font-weight: 400;
-  src: local('Lexend Deca Regular'),
-    local('LexendDeca-Regular') /* IE6-IE8 */
-      url('/fonts/lexend-deca-v1-latin-regular.woff2') format('woff2'),
-    /* Super Modern Browsers */ url('/fonts/lexend-deca-v1-latin-regular.woff')
-      format('woff'),
-    /* Modern Browsers */ url('/fonts/lexend-deca-v1-latin-regular.ttf')
-      format('truetype');
+  src: local("Lexend Deca Regular"),
+    local("LexendDeca-Regular") /* IE6-IE8 */
+      url("/fonts/lexend-deca-v1-latin-regular.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("/fonts/lexend-deca-v1-latin-regular.woff")
+      format("woff"),
+    /* Modern Browsers */ url("/fonts/lexend-deca-v1-latin-regular.ttf")
+      format("truetype");
 }
 
 * {
@@ -59,7 +59,7 @@
   padding: 0;
   margin: 0;
   font-size: 100%;
-  font-family: 'Lexend Deca', sans-serif;
+  font-family: "Lexend Deca", sans-serif;
 }
 
 html {
@@ -148,31 +148,31 @@ button {
       padding: 0.5em 0;
     }
     #score {
-      /*font-weight: bold;*/
-      font-size: 4.4em;
+      font-weight: bold;
+      font-size: 4em;
       margin: 0.2em;
       .circle {
         display: inline-block;
         line-height: 0px;
         border-radius: 50%;
-        border: 2px solid $black-alpha1;
-        background-color: $gray-light-light;
+        border: 6px solid $black-alpha4;
+        background-color: $bright-green;
         padding: 0.3em;
         .circle-text {
           display: inline-block;
           padding-top: 50%;
           padding-bottom: 50%;
-          margin-left: 8px;
-          margin-right: 8px;
-          color: #343434;
-          /*font-family: $helsinki;*/
+          margin-left: 4px;
+          margin-right: 4px;
+          color: $white;
+          font-family: $helsinki;
         }
       }
     }
   }
   #splash-footer {
     padding: 0.75em;
-    background-color: plum;
+    background-color: $gray;
     button#play {
       font-size: 1.5em;
       padding: 0.3em 0.5em;
@@ -271,6 +271,7 @@ button {
   margin: 0 auto;
   padding: 0;
   background-color: purple;
+  overflow: auto;
 }
 
 #match-board {
@@ -301,18 +302,18 @@ button {
 .term {
   /* Colors for tiles */
   $tileColors: (
-    ('red', $red, $white, $white),
-    ('orange', $orange, $white, $white),
-    ('yellow', $yellow, $graphite, $white),
-    ('lime', $lime, $graphite, $white),
-    ('green', $green, $white, $white),
-    ('cyan', $cyan, $graphite, $white),
-    ('blue', $blue, $white, $white),
-    ('purple', $purple, $white, $white),
-    ('magenta', $magenta, $white, $white),
-    ('gray', $gray, $white, $white),
-    ('navy', $navy, $white, $white),
-    ('teal', $teal, $white, $white)
+    ("red", $red, $white, $white),
+    ("orange", $orange, $white, $white),
+    ("yellow", $yellow, $graphite, $white),
+    ("lime", $lime, $graphite, $white),
+    ("green", $green, $white, $white),
+    ("cyan", $cyan, $graphite, $white),
+    ("blue", $blue, $white, $white),
+    ("purple", $purple, $white, $white),
+    ("magenta", $magenta, $white, $white),
+    ("gray", $gray, $white, $white),
+    ("navy", $navy, $white, $white),
+    ("teal", $teal, $white, $white)
   );
 
   @each $color, $background, $textColor, $borderColor in $tileColors {
@@ -367,8 +368,12 @@ button {
   background-size: 100% 2em;
 
   &.is-over {
-    background-color: #ffffff !important;
     background-image: unset;
+    background-color: rgba(0,0,255,.6) !important;
+    > .definition-text {
+      color: white !important;
+      text-shadow: none !important;
+    }
   }
 
   &.matched {
@@ -385,26 +390,26 @@ button {
 .term-text,
 .definition-text,
 .term-preview-text {
-  font-family: 'Lexend Deca', sans-serif;
+  font-family: "Lexend Deca", sans-serif;
   span {
-    font-family: 'Lexend Deca', sans-serif;
+    font-family: "Lexend Deca", sans-serif;
   }
   code,
   pre,
   sup,
   sub {
     /* Obviously, change this to something better, but the hook is in... */
-    font-family: 'Fira Code', monospace !important;
+    font-family: "Fira Code", monospace !important;
   }
 }
 
 .definition-text {
   color: rgba(33, 33, 33, 0.95);
-  font-family: 'Lexend Deca', sans-serif;
+  font-family: "Lexend Deca", sans-serif;
 }
 
 #terms {
-  background-color: turquoise;
+  background-color: $turquoise;
 }
 
 #definitions {
@@ -412,8 +417,8 @@ button {
 }
 
 /* mobile-ish breakpoint */
-@media screen and (max-width: 48em) {
-  html {
+@media screen and (max-width: 47.99em) {
+  #match-game {
     font-size: 90%;
   }
   #match-board {
@@ -427,18 +432,18 @@ button {
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    /*min-height: calc((100vh / 3) - 2em);*/
     padding: 0.5em;
     margin: 0 auto;
     text-align: center;
     justify-content: center;
+    align-content: center;
   }
 
   .term,
   .definition {
     flex: 0 0 auto;
     height: 2.33em;
-    min-width: 80px;
+    min-width: 93px;
     max-width: calc(100vw - 0.6em);
     margin: 0.3em;
     padding: 0.4em;
@@ -453,10 +458,9 @@ button {
   }
 
   .term-preview {
-    font-size: 100%;
-    display: 'inline-block';
+    display: "inline-block";
     height: 2.33em;
-    min-width: 150px;
+    min-width: 93px;
     max-width: calc(
       100vw - 0.6em
     ); // cap the width (just in case `fit-content` is not supported
@@ -500,8 +504,8 @@ button {
   }
 }
 
-@media screen and (min-width: 48em) and (max-width: 75em) {
-  html {
+@media screen and (min-width: 48em) and (max-width: 74.99em) {
+  #match-game {
     font-size: 100%;
   }
 
@@ -594,7 +598,7 @@ button {
 }
 
 @media screen and (min-width: 75em) {
-  html {
+  #match-game {
     font-size: 110%;
   }
 

@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { DndProvider } from 'react-dnd';
-import MultiBackend, { TouchTransition } from 'react-dnd-multi-backend';
-import HTML5Backend from 'react-dnd-html5-backend';
-import TouchBackend from 'react-dnd-touch-backend';
-import MatchDragLayer from './MatchDragLayer';
-import shortid from 'shortid';
-import { shuffleArray } from './utils';
-import MatchSplash from './MatchSplash';
-import Timer from './Timer';
-import MatchBoard from './MatchBoard';
-import logo from './logo.svg';
-import './match-new.scss';
+import React, { Component } from "react";
+import { DndProvider } from "react-dnd";
+import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
+import HTML5Backend from "react-dnd-html5-backend";
+import TouchBackend from "react-dnd-touch-backend";
+import MatchDragLayer from "./MatchDragLayer";
+import shortid from "shortid";
+import { shuffleArray } from "./utils";
+import MatchSplash from "./MatchSplash";
+import Timer from "./Timer";
+import MatchBoard from "./MatchBoard";
+import logo from "./logo.svg";
+import "./match-new.scss";
 
 const CustomHTML5toTouch = {
   backends: [
@@ -27,8 +27,6 @@ const CustomHTML5toTouch = {
 };
 
 class MatchGame extends Component {
-  /* TODO - Document somewhere and remove */
-  /*static HAS_HTML = new RegExp('<[^>]*>');*/
 
   /**
    * Initialize component, setting default values, etc.
@@ -37,7 +35,7 @@ class MatchGame extends Component {
   constructor(props) {
     super(props);
     const { id, title, instructions, author, matches } = this.props.game || {};
-    const { duration = 180, itemsPerBoard = 9, colorScheme = 'mono' } =
+    const { duration = 180, itemsPerBoard = 9, colorScheme = "mono" } =
       this.props.game.options || {};
     const matchDeck = this.transformData(matches);
     this.state = {
@@ -86,22 +84,22 @@ class MatchGame extends Component {
    */
   addColor(matches, colorScheme) {
     let colors = [
-      'red',
-      'orange',
-      'yellow',
-      'lime',
-      'green',
-      'cyan',
-      'blue',
-      'purple',
-      'magenta',
-      'navy',
-      'gray',
-      'teal'
+      "red",
+      "orange",
+      "yellow",
+      "lime",
+      "green",
+      "cyan",
+      "blue",
+      "purple",
+      "magenta",
+      "navy",
+      "gray",
+      "teal"
     ];
 
     switch (colorScheme) {
-      case 'rainbow':
+      case "rainbow":
         return matches.map(match => {
           let rand = Math.floor(Math.random() * colors.length);
           let color = colors[rand];
@@ -115,7 +113,7 @@ class MatchGame extends Component {
         return matches.map(match => {
           return {
             ...match,
-            color: ''
+            color: ""
           };
         });
     }
@@ -217,10 +215,10 @@ class MatchGame extends Component {
    */
   dealMatches = () => {
     this.setState((state, props) => {
-      console.log('color scheme', state.colorScheme);
+      console.log("color scheme", state.colorScheme);
       console.log(state.matchDeck);
       const matchDeck = shuffleArray(state.matchDeck);
-      console.log('shuffling match deck');
+      console.log("shuffling match deck");
       console.log(matchDeck);
       let matches = matchDeck.slice(
         0,
@@ -243,11 +241,11 @@ class MatchGame extends Component {
    * Show game board
    */
   handleGameStart = () => {
-    console.log('Handling game start...');
-    this.switch('correct', 0);
-    this.switch('incorrect', 0);
-    this.switch('score', 0);
-    this.switch('showSplash', false);
+    console.log("Handling game start...");
+    this.switch("correct", 0);
+    this.switch("incorrect", 0);
+    this.switch("score", 0);
+    this.switch("showSplash", false);
     this.nextRound();
   };
 
@@ -255,17 +253,17 @@ class MatchGame extends Component {
    * Chang
    */
   handleTimerStart = () => {
-    console.log('Timer started...');
-    this.switch('playing', true);
+    console.log("Timer started...");
+    this.switch("playing", true);
   };
 
   /**
    *
    */
   handleTimerEnd = () => {
-    console.log('Timer ended...');
-    this.switch('playing', false);
-    setTimeout(() => this.handleGameOver(), 2500);
+    console.log("Timer ended...");
+    this.switch("playing", false);
+    setTimeout(() => this.handleGameOver(), 1000);
   };
 
   /**
@@ -277,8 +275,8 @@ class MatchGame extends Component {
     const { onPing } = this.props;
     const { correct, incorrect, score } = this.state;
     onPing({ correct, incorrect, score });
-    this.switch('showSplash', true);
-    this.switch('showResults', true);
+    this.switch("showSplash", true);
+    this.switch("showResults", true);
   };
 
   /**
@@ -287,7 +285,7 @@ class MatchGame extends Component {
    * Show matches (initiates transitions)
    */
   handleRoundStart = () => {
-    console.log('starting round...');
+    console.log("starting round...");
     this.dealMatches();
     this.showMatches(true);
   };
@@ -296,36 +294,9 @@ class MatchGame extends Component {
    * Hide game board then show after brief timeout
    */
   nextRound = () => {
-    this.switch('showBoard', false);
-    setTimeout(() => this.switch('showBoard', true), 250);
+    this.switch("showBoard", false);
+    setTimeout(() => this.switch("showBoard", true), 500);
   };
-
-  /* TODO - document somewhere and remove */
-  /**
-   * @param {string} type - Category of source/target, i.e., "Match"
-   * @param {Object} item - Data related to, e.g., props, drag source (term)
-   * @param {Object} style - Style properties (to assign to parent element)
-   *
-   * Generate HTML and inline style related to terms
-   * Return null if game currently is not interactive, i.e., !playing
-   */
-  // generatePreview = (type, item, style) => {
-  //   const { playing, itemsPerBoard } = this.state;
-  //   const classes = ['term', 'preview', 'dragging'];
-  //   const classesString = classes
-  //     .concat(...(item.color ? [item.color] : []))
-  //     .concat(...(itemsPerBoard ? [`tiles-${itemsPerBoard}`] : []))
-  //     .join(' ');
-  //   return (
-  //     <React.Fragment>
-  //       {playing ? (
-  //         <div style={style} className={classesString}>
-  //           <div className="term-text">{item.term}</div>
-  //         </div>
-  //       ) : null}
-  //     </React.Fragment>
-  //   );
-  // };
 
   /**
    * When a Term component is dropped upon a Definition
@@ -372,25 +343,6 @@ class MatchGame extends Component {
     if (matches.length === 0) return this.nextRound();
   };
 
-  /*
-          <div
-            id="splash-container"
-            className="scroll-container triangle dark-lavender"
-          >
-            <MatchSplash
-              title={title}
-              termCount={termCount}
-              topic="Remove in lieu of using just title"
-              author={author}
-              instructions={instructions}
-              wait={100}
-              onGameStart={this.handleGameStart}
-              showResults={showResults}
-              score={score}
-            />
-          </div>
-        */
-
   render() {
     const {
       title,
@@ -398,7 +350,6 @@ class MatchGame extends Component {
       instructions,
       duration,
       itemsPerBoard,
-      termCount,
       playing,
       showSplash,
       showBoard,
@@ -429,7 +380,7 @@ class MatchGame extends Component {
         />
         <div id="match-game">
           <MatchBoard
-            wait={500}
+            wait={300}
             show={showBoard}
             playing={playing}
             matches={matches}
@@ -448,7 +399,7 @@ class MatchGame extends Component {
               score={score}
               onTimerStart={this.handleTimerStart}
               onTimerEnd={this.handleTimerEnd}
-              wait={500}
+              wait={300}
             />
           )}
         </div>
@@ -458,16 +409,3 @@ class MatchGame extends Component {
 }
 
 export default MatchGame;
-
-//export default DragDropContext(MultiBackend(HTML5toTouch))(MatchGame);
-
-{
-  /*<img id='game-logo' src={logo} alt='Quizdini Logo' />
-              <img
-                id='game-computer-stars'
-                src={computerStars}
-                alt='Computer Stars'
-              />
-              <img id='game-computer' src={computer} alt='Computer' />
-              <div id='game-title'>{title}</div> */
-}

@@ -36,7 +36,7 @@ class Match extends Component {
   componentDidMount() {
     setTimeout(() => {
       this.fetchGame();
-    }, 1500);
+    }, 500);
   }
 
   async fetchGame() {
@@ -52,7 +52,7 @@ class Match extends Component {
             content: `"${matchId}" is not a valid game id`
           }
         });
-      }, 1500);
+      }, 500);
     }
     const { title } = game;
     const pageTitle = [process.env.REACT_APP_WEBSITE_NAME, title].join(' | ');

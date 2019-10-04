@@ -1,6 +1,6 @@
-import React from 'react';
-import Modal from '../UI/Modal';
-import logo from './logo.svg';
+import React from "react";
+import Modal from "../UI/Modal";
+import logo from "./logo.svg";
 
 const MatchSplash = ({
   author,
@@ -33,12 +33,14 @@ const MatchSplash = ({
               </span>
             </div>
           )}
-          <div id="options">
-            <span className="items-per-board">
-              {itemsPerBoard} items per board
-            </span>
-            <span className="duration">{duration} seconds</span>
-          </div>
+          {!showResults && (
+            <div id="options">
+              <span className="items-per-board">
+                {itemsPerBoard} items per board
+              </span>
+              <span className="duration">{duration} seconds</span>
+            </div>
+          )}
           {!showResults && <div className="instructions">{instructions}</div>}
         </section>
         <section id="splash-footer">
@@ -46,9 +48,8 @@ const MatchSplash = ({
             id="play"
             onClick={onGameStart}
             onKeyPress={onGameStart}
-            tabIndex={1}
-          >
-            {showResults ? 'Play Again' : 'Play Game'}
+            tabIndex={1}>
+            {showResults ? "Play Again" : "Play Game"}
           </button>
         </section>
       </div>

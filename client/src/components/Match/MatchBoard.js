@@ -127,11 +127,11 @@ class MatchBoard extends Component {
       default: { opacity: 0 },
       entering: { opacity: 0 },
       entered: {
-        transition: `opacity ${timeout.enter}ms cubic-bezier(.17,.67,.83,.67)`,
+        transition: `all ${timeout.enter}ms cubic-bezier(.17,.67,.83,.67)`,
         opacity: 1.0
       },
       exiting: {
-        transition: `opacity ${timeout.exit}ms cubic-bezier(.17,.67,.83,.67)`,
+        transition: `all ${timeout.exit}ms cubic-bezier(.17,.67,.83,.67)`,
         opacity: 0.1
       },
       exited: { opacity: 0 }

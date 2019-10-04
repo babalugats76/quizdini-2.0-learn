@@ -26,12 +26,14 @@
   top: 50%;
   left: 50%;
   height: auto;
-  width: 100%;
+  max-height: 100vh;
+  min-width: 18em;
   max-width: 32em;
   z-index: 2000;
   visibility: hidden;
   backface-visibility: hidden;
   transform: translateX(-50%) translateY(-50%);
+  overflow: auto;
 }
 
 .modal-content {
@@ -49,7 +51,7 @@
   z-index: 1000;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
-  transition: all 0.5s;
+  transition: all 300ms;
 }
 
 .modal-show {

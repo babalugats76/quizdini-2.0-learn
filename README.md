@@ -152,3 +152,36 @@ Using File explorer, remove `.git` directory from `client`
 ## Bring legacy code and configuration forward
 
 Now that a basic project is in place, bring forward previous code for both the client and the server. Update node modules as required, etc.
+
+## Legacy Code Snippets
+
+```
+/**
+   * @param {string} type - Category of source/target, i.e., "Match"
+   * @param {Object} item - Data related to, e.g., props, drag source (term)
+   * @param {Object} style - Style properties (to assign to parent element)
+   *
+   * Generate HTML and inline style related to terms
+   * Return null if game currently is not interactive, i.e., !playing
+   */
+  generatePreview = (type, item, style) => {
+    const { playing, itemsPerBoard } = this.state;
+    const classes = ['term', 'preview', 'dragging'];
+    const classesString = classes
+      .concat(...(item.color ? [item.color] : []))
+      .concat(...(itemsPerBoard ? [`tiles-${itemsPerBoard}`] : []))
+      .join(' ');
+    return (
+      <React.Fragment>
+        {playing ? (
+          <div style={style} className={classesString}>
+            <div className="term-text">{item.term}</div>
+          </div>
+        ) : null}
+      </React.Fragment>
+    );
+  };
+  ```
+ ```
+ static HAS_HTML = new RegExp('<[^>]*>');
+ ```
