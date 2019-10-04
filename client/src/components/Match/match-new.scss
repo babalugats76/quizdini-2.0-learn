@@ -271,10 +271,6 @@ button {
   margin: 0 auto;
   padding: 0;
   background-color: purple;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
-  justify-items: center;
 }
 
 #match-board {
@@ -425,10 +421,6 @@ button {
     /* 1 column */
     grid-template-columns: 1fr;
     grid-template-rows: auto;
-    align-content: center;
-    align-items: center;
-    justify-items: center;
-    justify-content: center;
   }
   #terms,
   #definitions {
@@ -436,7 +428,7 @@ button {
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    min-height: calc((100vh / 3) - 2em);
+    /*min-height: calc((100vh / 3) - 2em);*/
     padding: 0.5em;
     margin: 0 auto;
     text-align: center;
