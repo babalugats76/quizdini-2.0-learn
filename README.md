@@ -3,10 +3,19 @@
 # Todo List
 
 - Client
+  - CSS / Style
+    - Remove all old fonts, etc.
+    - Rename `img` to `images` directory
+    - Copy `Cabin` and `Lexend Deca` fonts to `fonts` directory
+    - Update stylesheet with references to newly-imported fonts
+    - Try replacing Helsinki with something else 
+    - Create centralized stylesheet and then match-specific one
+  - `public`
+    - Remove unnecessary `manifest.json` file
+  - Landing
+    - Stub out a basic `Landing Page` which has placeholders for games and links to the Teacher Site, etc.
   - MatchGame
     - Add modern game logo
-  - Match
-    - Cleanup CSS
   - Refine Splash
   - Refine Modal
 
