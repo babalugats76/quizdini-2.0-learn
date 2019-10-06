@@ -1,6 +1,5 @@
 import React from 'react';
-import logo from '../Match/logo.svg';
-import './spinner.scss';
+import logo from '../../../src/logo.svg';
 
 const Spinner = () => {
   return <img className="logo-spinner" src={logo} alt="Quizdini Logo" />;

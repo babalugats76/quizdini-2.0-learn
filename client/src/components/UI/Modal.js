@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import GameTransition from './GameTransition';
-import './modal.scss';
 
 const timeout = {
   enter: 500,

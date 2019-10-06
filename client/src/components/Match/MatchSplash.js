@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "../UI/Modal";
-import logo from "./logo.svg";
+//import logo from "../../../src/logo.svg";
 
 const MatchSplash = ({
   author,

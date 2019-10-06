@@ -1,16 +1,15 @@
-import React, { Component } from "react";
-import { DndProvider } from "react-dnd";
-import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
-import HTML5Backend from "react-dnd-html5-backend";
-import TouchBackend from "react-dnd-touch-backend";
-import MatchDragLayer from "./MatchDragLayer";
-import shortid from "shortid";
-import { shuffleArray } from "./utils";
-import MatchSplash from "./MatchSplash";
-import Timer from "./Timer";
-import MatchBoard from "./MatchBoard";
-import logo from "./logo.svg";
-import "./match-new.scss";
+import React, { Component } from 'react';
+import { DndProvider } from 'react-dnd';
+import MultiBackend, { TouchTransition } from 'react-dnd-multi-backend';
+import HTML5Backend from 'react-dnd-html5-backend';
+import TouchBackend from 'react-dnd-touch-backend';
+import MatchDragLayer from './MatchDragLayer';
+import shortid from 'shortid';
+import { shuffleArray } from './utils';
+import MatchSplash from './MatchSplash';
+import Timer from './Timer';
+import MatchBoard from './MatchBoard';
+// import logo from '../../../src/logo.svg';
 
 const CustomHTML5toTouch = {
   backends: [
@@ -27,7 +26,6 @@ const CustomHTML5toTouch = {
 };
 
 class MatchGame extends Component {
-
   /**
    * Initialize component, setting default values, etc.
    * @param {Object} props - Properties passed to component
@@ -35,7 +33,7 @@ class MatchGame extends Component {
   constructor(props) {
     super(props);
     const { id, title, instructions, author, matches } = this.props.game || {};
-    const { duration = 180, itemsPerBoard = 9, colorScheme = "mono" } =
+    const { duration = 180, itemsPerBoard = 9, colorScheme = 'mono' } =
       this.props.game.options || {};
     const matchDeck = this.transformData(matches);
     this.state = {
@@ -84,22 +82,22 @@ class MatchGame extends Component {
    */
   addColor(matches, colorScheme) {
     let colors = [
-      "red",
-      "orange",
-      "yellow",
-      "lime",
-      "green",
-      "cyan",
-      "blue",
-      "purple",
-      "magenta",
-      "navy",
-      "gray",
-      "teal"
+      'red',
+      'orange',
+      'yellow',
+      'lime',
+      'green',
+      'cyan',
+      'blue',
+      'purple',
+      'magenta',
+      'navy',
+      'gray',
+      'teal'
     ];
 
     switch (colorScheme) {
-      case "rainbow":
+      case 'rainbow':
         return matches.map(match => {
           let rand = Math.floor(Math.random() * colors.length);
           let color = colors[rand];
@@ -113,7 +111,7 @@ class MatchGame extends Component {
         return matches.map(match => {
           return {
             ...match,
-            color: ""
+            color: ''
           };
         });
     }
@@ -215,10 +213,10 @@ class MatchGame extends Component {
    */
   dealMatches = () => {
     this.setState((state, props) => {
-      console.log("color scheme", state.colorScheme);
+      console.log('color scheme', state.colorScheme);
       console.log(state.matchDeck);
       const matchDeck = shuffleArray(state.matchDeck);
-      console.log("shuffling match deck");
+      console.log('shuffling match deck');
       console.log(matchDeck);
       let matches = matchDeck.slice(
         0,
@@ -241,11 +239,11 @@ class MatchGame extends Component {
    * Show game board
    */
   handleGameStart = () => {
-    console.log("Handling game start...");
-    this.switch("correct", 0);
-    this.switch("incorrect", 0);
-    this.switch("score", 0);
-    this.switch("showSplash", false);
+    console.log('Handling game start...');
+    this.switch('correct', 0);
+    this.switch('incorrect', 0);
+    this.switch('score', 0);
+    this.switch('showSplash', false);
     this.nextRound();
   };
 
@@ -253,16 +251,16 @@ class MatchGame extends Component {
    * Chang
    */
   handleTimerStart = () => {
-    console.log("Timer started...");
-    this.switch("playing", true);
+    console.log('Timer started...');
+    this.switch('playing', true);
   };
 
   /**
    *
    */
   handleTimerEnd = () => {
-    console.log("Timer ended...");
-    this.switch("playing", false);
+    console.log('Timer ended...');
+    this.switch('playing', false);
     setTimeout(() => this.handleGameOver(), 1000);
   };
 
@@ -275,8 +273,8 @@ class MatchGame extends Component {
     const { onPing } = this.props;
     const { correct, incorrect, score } = this.state;
     onPing({ correct, incorrect, score });
-    this.switch("showSplash", true);
-    this.switch("showResults", true);
+    this.switch('showSplash', true);
+    this.switch('showResults', true);
   };
 
   /**
@@ -285,7 +283,7 @@ class MatchGame extends Component {
    * Show matches (initiates transitions)
    */
   handleRoundStart = () => {
-    console.log("starting round...");
+    console.log('starting round...');
     this.dealMatches();
     this.showMatches(true);
   };
@@ -294,8 +292,8 @@ class MatchGame extends Component {
    * Hide game board then show after brief timeout
    */
   nextRound = () => {
-    this.switch("showBoard", false);
-    setTimeout(() => this.switch("showBoard", true), 500);
+    this.switch('showBoard', false);
+    setTimeout(() => this.switch('showBoard', true), 500);
   };
 
   /**

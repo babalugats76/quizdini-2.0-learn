@@ -20,10 +20,10 @@ class NotFound extends Component {
   render() {
     const { message: { content = '', header = '' } = {} } = this.state;
     return (
-      <div className="game-wrapper">
-        <div id="notfound" className="fixed-center">
+      <div id="notfound" className="full-page purple">
+        <div className="fixed-center">
           {header && <h1>{header}</h1>}
-          {content && <div>{content}</div>}
+          {content && <p>{content}</p>}
         </div>
       </div>
     );

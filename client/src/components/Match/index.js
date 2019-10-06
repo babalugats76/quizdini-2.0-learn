@@ -1,10 +1,12 @@
+import '../../match.scss';
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import { isEmpty } from './utils';
+import Loading from '../UI/Loading';
 import MatchGame from './MatchGame';
-import Spinner from '../UI/Spinner';
 
 const Error = ({ error }) => {
   return (
@@ -16,13 +18,6 @@ const Error = ({ error }) => {
     </div>
   );
 };
-
-const Loading = () => (
-  <div className="loading fixed-center">
-    <Spinner />
-    <h1>LOADING...</h1>
-  </div>
-);
 
 class Match extends Component {
   handlePing = this.handlePing.bind(this);
@@ -78,7 +73,7 @@ class Match extends Component {
 
   render() {
     const game = this.renderGame(this.props);
-    return <div className="game-wrapper">{game}</div>;
+    return <div className="full-page purple">{game}</div>;
   }
 }
 

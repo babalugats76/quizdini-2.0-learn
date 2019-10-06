@@ -11,12 +11,14 @@ const TermPreview = ({ term, itemsPerBoard, ...rest }) => {
   };
 
   return (
-    <div className={previewClasses}>
-      <div
-        className="term-preview-text"
-        dangerouslySetInnerHTML={renderHtml(term)}
-      ></div>
-    </div>
+    term && (
+      <div className={previewClasses}>
+        <div
+          className="term-preview-text"
+          dangerouslySetInnerHTML={renderHtml(term)}
+        ></div>
+      </div>
+    )
   );
 };
 export default TermPreview;

@@ -1,27 +1,31 @@
 // Fonts
-$helsinki: 'helsinkiregular';
-$jaywalker: 'jaywalkerregular';
-$jollygoodsans: 'jollygoodsans-regular';
-$jollygoodsansbold: 'jollygood_sansbold';
-$hkgroteskbold: 'hk_groteskbold';
-$hkgroteskmedium: 'hk_groteskmedium';
+$lexenddeca: 'Lexend Deca', sans-serif;
+$cabin: 'Cabin', sans-serif;
+$fredokaone: 'Fredoka One', cursive;
+
+// Official Quizdini Theme Colors
+$quizdini-indigo: rgba(113, 28, 255, 1);
+$quizdini-purple: rgba(170, 84, 255, 1);
+$quizdini-turquoise: rgba(1, 231, 228, 1);
+$quizdini-blue: rgba(1, 76, 228, 1);
+$quizdini-zaffre: rgba(0, 19, 153, 1);
 
 // Colors
 $white: #ffffff;
-$white-alpha9: rgba(255,255,255,0.9);
-$white-alpha1: rgba(255,255,255,0.1);
+$white-alpha9: rgba(255, 255, 255, 0.9);
+$white-alpha1: rgba(255, 255, 255, 0.1);
 $black: #000000;
-$black-alpha4: rgba(0,0,0,0.4);
-$black-alpha3: rgba(0,0,0,0.3);
-$black-alpha2: rgba(0,0,0,0.2);
-$black-alpha1: rgba(0,0,0,0.1);
+$black-alpha4: rgba(0, 0, 0, 0.4);
+$black-alpha3: rgba(0, 0, 0, 0.3);
+$black-alpha2: rgba(0, 0, 0, 0.2);
+$black-alpha1: rgba(0, 0, 0, 0.1);
 $gray-light-light: #f5f5f6;
-$gray-light: #e1e2e1; 
-$gray: #a9a9a9; 
+$gray-light: #e1e2e1;
+$gray: #a9a9a9;
 $gray-dark: #555555;
 $gray-dark-dark: #333333;
 
-$turquoise: #40E0D0;
+$turquoise: #40e0d0;
 
 $red: #e6194b;
 $green: #3cb44b;
@@ -37,26 +41,21 @@ $pink: #fabebe;
 $teal: #469990;
 $lavender: #e6beff;
 $brown: #9a6324;
-$beige: #ECE2D0;
+$beige: #ece2d0;
 $maroon: #800000;
 $mint: #aaffc3;
 $olive: #808000;
 $apricot: #ffd8b1;
 $navy: #000075;
-$graphite: rgba(56, 52, 40, 1.0);
+$graphite: rgba(56, 52, 40, 1);
 $bright-green: rgb(31, 231, 63);
 
-$logo-gray-light: #CCCCCB;
-$logo-black: #232F34;
+$logo-gray-light: #cccccb;
+$logo-black: #232f34;
 $logo-gray: #404041;
 $logo-white: #fcfcfc;
 
-$splash-green: #5cdd96;
-$splash-yellow: #ffce4d;
-
-$splash-purple: #5D2E8C;
 $banana: #f1e8b8;
-
 $tuscan-red: rgba(103, 60, 79, 1);
 $seashell: rgba(255, 243, 239, 1);
 $tropical-rain-forest: rgba(0, 102, 102, 1);
@@ -74,7 +73,6 @@ $gainboro: #dbdbdb;
 $platinum: #e4e0e6;
 $dark-lavender: #7c4199;
 
-
 $highlighter-yellow: #ffc;
 $lined-paper-blue: #d0edf8;
-$lined-paper-red: rgba(220, 108, 142, .3s);
+$lined-paper-red: rgba(220, 108, 142, 0.3s);
