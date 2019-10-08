@@ -293,11 +293,12 @@
     font-family: $lexenddeca;
   }
   code,
+  kbd,
+  samp,
   pre,
   sup,
   sub {
-    /* Obviously, change this to something better, but the hook is in... */
-    font-family: 'Fira Code', monospace !important;
+    font-family: 'Fira Code', monospace;
   }
 }
 

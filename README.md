@@ -3,12 +3,9 @@
 # Todo List
 
 - Client
+
   - CSS / Style
-    - Remove all old fonts, etc.
-    - Rename `img` to `images` directory
-    - Copy `Cabin` and `Lexend Deca` fonts to `fonts` directory
-    - Update stylesheet with references to newly-imported fonts
-    - Try replacing Helsinki with something else 
+    - _Try replacing Helsinki with something else_
     - Create centralized stylesheet and then match-specific one
   - `public`
     - Remove unnecessary `manifest.json` file
@@ -18,6 +15,7 @@
     - Add modern game logo
   - Refine Splash
   - Refine Modal
+    - Top and margin (for scrolling)?
 
 - Kay Items
   - Draft RFP for Kay
@@ -190,7 +188,8 @@ Now that a basic project is in place, bring forward previous code for both the c
       </React.Fragment>
     );
   };
-  ```
- ```
- static HAS_HTML = new RegExp('<[^>]*>');
- ```
+```
+
+```
+static HAS_HTML = new RegExp('<[^>]*>');
+```
