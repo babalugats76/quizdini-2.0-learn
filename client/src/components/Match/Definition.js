@@ -5,10 +5,12 @@ const definitionTarget = {
   drop(props, monitor, component) {
     console.log('drop...');
     const item = monitor.getItem();
-    const matched = item.term === props.term ? true : false;
+    const matched = item.definition === props.definition ? true : false;
     return {
       matched: matched,
-      id: item.id,
+      termId: item.id,
+      definitionId: props.id,
+      //id: item.id,
       term: item.term,
       definition: props.definition
     };

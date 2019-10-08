@@ -7,18 +7,20 @@ class MatchBoard extends Component {
   renderTerms({
     itemsPerBoard,
     matches,
+    terms,
+    definitions,
     onDrop,
     onExited,
     playing,
     termOrder,
     wait
   }) {
-    return termOrder.map((matchIdx, idx) => {
-      const match = matches[matchIdx];
+    return termOrder.map((termIdx, idx) => {
+      const term = terms[termIdx];
 
       /* Dynamically determine enter/exit transition times, i.e., achieve brick-laying effect */
       const timeout = {
-        enter: ((idx + 1) / matches.length) * wait,
+        enter: ((idx + 1) / terms.length) * wait,
         exit: wait
       };
 
@@ -41,20 +43,21 @@ class MatchBoard extends Component {
           mountOnEnter={true}
           unmountOnExit={false}
           appear={true}
-          key={match.id}
-          in={match.show}
+          key={term.id}
+          in={term.show}
           timeout={timeout}
           transitionStyles={transitionStyles}
-          onExited={id => onExited(match.id)}
+          onExited={(id, type) => onExited(term.id, 'term')}
         >
           <Term
-            id={match.id}
-            color={match.color}
-            term={match.term}
+            id={term.id}
+            color={term.color}
+            term={term.term}
+            definition={term.definition}
             itemsPerBoard={itemsPerBoard}
-            show={match.show}
+            show={term.show}
             canDrag={playing}
-            matched={match.matched}
+            matched={term.matched}
             onDrop={onDrop}
           />
         </GameTransition>
@@ -62,12 +65,12 @@ class MatchBoard extends Component {
     });
   }
 
-  renderDefinitions({ definitionOrder, matches, wait }) {
-    return definitionOrder.map((matchIdx, idx) => {
-      const match = matches[matchIdx];
+  renderDefinitions({ definitionOrder, definitions, matches, wait, onExited }) {
+    return definitionOrder.map((defIdx, idx) => {
+      const definition = definitions[defIdx];
 
       const timeout = {
-        enter: ((idx + 1) / matches.length) * wait,
+        enter: ((idx + 1) / definitions.length) * wait,
         exit: wait
       };
 
@@ -93,17 +96,18 @@ class MatchBoard extends Component {
           mountOnEnter={true}
           unmountOnExit={false}
           appear={true}
-          key={match.id}
-          in={match.show}
+          key={definition.id}
+          in={definition.show}
           timeout={timeout}
           transitionStyles={transitionStyles}
+          onExited={(id, type) => onExited(definition.id, 'definition')}
         >
           <Definition
-            id={match.id}
-            definition={match.definition}
-            term={match.term}
-            show={match.show}
-            matched={match.matched}
+            id={definition.id}
+            definition={definition.definition}
+            term={definition.term}
+            show={definition.show}
+            matched={definition.matched}
           />
         </GameTransition>
       );

@@ -51,7 +51,9 @@ class MatchGame extends Component {
       matchDeck,
       termCount: matchDeck.length,
       matches: [],
+      terms: [],
       termOrder: [],
+      definitions: [],
       definitionOrder: [],
       unmatched: 0,
       correct: 0,
@@ -174,11 +176,19 @@ class MatchGame extends Component {
    */
   showMatches = show => {
     this.setState((state, props) => {
-      const matches = state.matches.map(match => {
+      /*const matches = state.matches.map(match => {
         match.show = show;
         return match;
+      });*/
+      const terms = state.terms.map(term => {
+        term.show = show;
+        return term;
       });
-      return { matches };
+      const definitions = state.definitions.map(def => {
+        def.show = show;
+        return def;
+      });
+      return { terms, definitions };
     });
   };
 
@@ -189,16 +199,36 @@ class MatchGame extends Component {
    *   Set matched to true, facilitates exiting styling, etc.
    * @param {string} id - Match id that
    */
-  handleMatched = id => {
+  handleMatched = dropResult => {
+    const { id, termId, definitionId } = dropResult;
+    console.log('Remove term', termId, 'and def', definitionId);
     this.setState((state, props) => {
-      const matches = state.matches.map(match => {
+      const terms = state.terms.map(term => {
+        if (term.id === termId) {
+          console.log('term matched!');
+          term.show = false;
+          term.matched = true;
+        }
+        return term;
+      });
+
+      const definitions = state.definitions.map(def => {
+        if (def.id === definitionId) {
+          console.log('def matched!');
+          def.show = false;
+          def.matched = true;
+        }
+        return def;
+      });
+
+      /*const matches = state.matches.map(match => {
         if (match.id === id) {
           match.show = false;
           match.matched = true;
         }
         return match;
-      });
-      return { matches };
+      });*/
+      return { terms, definitions };
     });
   };
 
@@ -213,8 +243,6 @@ class MatchGame extends Component {
    */
   dealMatches = () => {
     this.setState((state, props) => {
-      console.log('color scheme', state.colorScheme);
-      console.log(state.matchDeck);
       const matchDeck = shuffleArray(state.matchDeck);
       console.log('shuffling match deck');
       console.log(matchDeck);
@@ -222,14 +250,41 @@ class MatchGame extends Component {
         0,
         Math.min(state.itemsPerBoard, matchDeck.length)
       );
-      matches = matches.map(match => {
+
+      let terms = matches.map(match => {
         return { ...match, show: false, matched: false };
       });
+      terms = this.addColor(terms, state.colorScheme);
+      console.log('separating out terms (with colors)...');
+      console.log(terms);
+
+      let definitions = matches.map(match => {
+        return { ...match, show: false, matched: false };
+      });
+      console.log('separating out definitions...');
+      console.log(definitions);
+
+      /*matches = matches.map(match => {
+        return { ...match, show: false, matched: false };
+      }); */
+
       matches = this.addColor(matches, state.colorScheme);
-      const termOrder = this.getTermOrder(matches);
-      const definitionOrder = this.getDefinitionOrder(matches);
+
+      //const termOrder = this.getTermOrder(matches);
+      const termOrder = this.getTermOrder(terms);
+      //const definitionOrder = this.getDefinitionOrder(matches);
+      const definitionOrder = this.getDefinitionOrder(definitions);
       const unmatched = definitionOrder.length;
-      return { matchDeck, matches, termOrder, definitionOrder, unmatched };
+
+      return {
+        matchDeck,
+        //matches,
+        terms,
+        termOrder,
+        definitions,
+        definitionOrder,
+        unmatched
+      };
     });
   };
 
@@ -320,7 +375,7 @@ class MatchGame extends Component {
       return { correct, incorrect, score, unmatched };
     });
 
-    if (dropResult.matched) this.handleMatched(dropResult.id);
+    if (dropResult.matched) this.handleMatched(dropResult);
     if (unmatched < 1) this.showMatches(false);
   };
 
@@ -329,16 +384,38 @@ class MatchGame extends Component {
    * Recreate shuffled arrays specifying the rendor order of terms and defs
    * If board has been cleared, start next round, i.e., nextRound()
    * @param {string} id - Match id to remove from matches
+   * @param {string} type - What to remove, i.e., 'term','definition'
    */
-  handleExited = id => {
-    const matches = this.state.matches.filter(match => {
-      return match.id !== id;
-    });
-    const termOrder = this.getTermOrder(matches);
-    const definitionOrder = this.getDefinitionOrder(matches);
-    this.setState({ matches, termOrder, definitionOrder });
-    // If all data has been removed, proceed to next round
-    if (matches.length === 0) return this.nextRound();
+  handleExited = (id, type) => {
+    let roundOver = false;
+    switch (type) {
+      case 'term':
+        console.log('term case');
+        const terms = this.state.terms.filter(term => {
+          return term.id !== id;
+        });
+        console.log('terms (length)', terms.length);
+        const termOrder = this.getTermOrder(terms);
+        if (terms.length === 0 && this.state.definitions.length === 0) {
+          this.nextRound();
+        }
+        this.setState({ terms, termOrder });
+        break;
+      case 'definition':
+        console.log('definition case');
+        const definitions = this.state.definitions.filter(def => {
+          return def.id !== id;
+        });
+        console.log('definitions (length)', definitions.length);
+        const definitionOrder = this.getDefinitionOrder(definitions);
+        if (definitions.length === 0 && this.state.terms.length === 0) {
+          this.nextRound();
+        }
+        this.setState({ definitions, definitionOrder });
+        break;
+      default:
+        break;
+    }
   };
 
   render() {
@@ -356,7 +433,9 @@ class MatchGame extends Component {
       incorrect,
       score,
       matches,
+      terms,
       termOrder,
+      definitions,
       definitionOrder
     } = this.state;
 
@@ -382,11 +461,13 @@ class MatchGame extends Component {
             show={showBoard}
             playing={playing}
             matches={matches}
+            terms={terms}
             termOrder={termOrder}
             itemsPerBoard={itemsPerBoard}
+            definitions={definitions}
             definitionOrder={definitionOrder}
-            onDrop={dropResult => this.handleDrop(dropResult)}
-            onExited={id => this.handleExited(id)}
+            onDrop={this.handleDrop}
+            onExited={this.handleExited}
             onRoundStart={this.handleRoundStart}
           />
           {!showSplash && (
