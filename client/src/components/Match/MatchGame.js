@@ -97,7 +97,7 @@ class MatchGame extends Component {
       'teal'
     ];
 
-    switch (colorScheme) {
+    switch (colorScheme.toLowerCase()) {
       case 'rainbow':
         return matches.map(match => {
           let rand = Math.floor(Math.random() * colors.length);
@@ -117,27 +117,6 @@ class MatchGame extends Component {
         });
     }
   }
-
-  /**
-   * Toggles boolean state properties
-   * @param {string} property - Property in the state object to toggle
-   */
-  // toggle = property => {
-  //   this.setState((state, props) => {
-  //     return { [property]: !state[property] };
-  //   });
-  // };
-
-  // /**
-  //  * Updates value of item in state
-  //  * @param {string} property - State item to update
-  //  * @param {any} value - New value to assign to state item
-  //  */
-  // updateState = (property, value) => {
-  //   this.setState((state, props) => {
-  //     return { [property]: value };
-  //   });
-  // };
 
   /**
    * Shows or hides all match objects, triggering transitions
@@ -161,10 +140,21 @@ class MatchGame extends Component {
 
   /**
    * Updates state of matched term/definition combo
-   * For matched id:
-   *   Set show to false, triggering transition
-   *   Set matched to true, facilitates exiting styling, etc.
-   * @param {string} id - Match id that
+   *
+   * The `dropResult` object contains monitor payload
+   * associated with drag-and-drop interaction
+   *
+   * A separate `termId` and `definitionId` are present
+   * because it is possible to have terms with duplicate
+   * definition text; therefore, we need to know the exact
+   * term and definition involved so specific tiles are
+   * removed from the screen
+   *
+   * For each:
+   *   Set show to `false`, triggering transition
+   *   Set matched to `true`, facilitates exiting styling, etc.
+   *
+   * @param {Object} dropResult - Monitor payload (includes ids)
    */
   handleMatched = dropResult => {
     const { termId, definitionId } = dropResult;
@@ -192,31 +182,39 @@ class MatchGame extends Component {
    * Shuffle the match deck
    * Pick subset of matches (itemsPerBoard)
    * Split out into terms and definitions
-   * Add/Set additional "flags" needed by game, e.g., `show`, `matched`
+   * Add/set additional "flags" needed by game, e.g., `show`, `matched`
    * Apply color scheme, i.e., assign color classes to game terms "tiles"
    * Shuffle terms and definitions, i.e., generate array of random indices
-   * Calculates unmatched
+   * Calculate `unmatched`
    * Update related state items (using setState)
    */
   dealMatches = () => {
     this.setState((state, props) => {
+      // Shuffle all available matches
       const shuffled = shuffleArray(state.matchDeck);
+      
+      // Grab just necessary #
       const matches = shuffled.slice(
         0,
         Math.min(state.itemsPerBoard, shuffled.length)
       );
 
+      // Add additional properties (needed for game play)
       let terms = matches.map(match => {
         return { ...match, show: false, matched: false };
       });
-      terms = this.addColor(terms, state.colorScheme);
-      terms = shuffleArray(terms);
 
-      let definitions = matches.map(match => {
-        return { ...match, show: false, matched: false };
-      });
+      // Clone definitions from terms
+      let definitions = [...terms];
+
+      // Add colors (to terms only)
+      terms = this.addColor(terms, state.colorScheme);
+      
+      // Shuffle
+      terms = shuffleArray(terms);
       definitions = shuffleArray(definitions);
 
+      // # of matches yet unmatched
       const unmatched = definitions.length;
 
       return {
@@ -340,14 +338,17 @@ class MatchGame extends Component {
         if (terms && terms.length) {
           terms = shuffleArray(terms);
         }
+
         roundOver =
           terms &&
           terms.length === 0 &&
           this.state.definitions &&
           this.state.definitions.length === 0;
+
         this.setState({ terms });
 
         break;
+
       case 'definition':
         let definitions = this.state.definitions.filter(def => def.id !== id);
         if (definitions && definitions.length) {
@@ -358,7 +359,9 @@ class MatchGame extends Component {
           definitions.length === 0 &&
           this.state.terms &&
           this.state.terms.length === 0;
+
         this.setState({ definitions });
+
         break;
       default:
         break;

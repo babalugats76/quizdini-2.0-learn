@@ -193,3 +193,26 @@ Now that a basic project is in place, bring forward previous code for both the c
 ```
 static HAS_HTML = new RegExp('<[^>]*>');
 ```
+```
+  /**
+   * Toggles boolean state properties
+   * @param {string} property - Property in the state object to toggle
+   */
+  toggle = property => {
+    this.setState((state, props) => {
+      return { [property]: !state[property] };
+    });
+  };
+```
+```
+  /**
+   * Updates value of item in state
+   * @param {string} property - State item to update
+   * @param {any} value - New value to assign to state item
+   */
+  updateState = (property, value) => {
+    this.setState((state, props) => {
+      return { [property]: value };
+    });
+  };
+```
