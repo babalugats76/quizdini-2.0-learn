@@ -32,33 +32,32 @@ class MatchGame extends Component {
    */
   constructor(props) {
     super(props);
-    const { id, title, instructions, author, matches } = this.props.game || {};
-    const { duration = 180, itemsPerBoard = 9, colorScheme = 'mono' } =
+    const { author, id, instructions, matches, title } = this.props.game || {};
+    const { colorScheme = 'mono', duration = 180, itemsPerBoard = 9 } =
       this.props.game.options || {};
     const matchDeck = this.transformData(matches);
+
+    // Copying props to state because of default value overriding, etc.
     this.state = {
-      id,
-      title,
-      author,
-      instructions,
-      itemsPerBoard,
-      duration,
-      colorScheme,
-      playing: false,
-      showSplash: true,
-      showBoard: false,
-      showResults: false,
-      matchDeck,
-      termCount: matchDeck.length,
-      matches: [],
-      terms: [],
-      termOrder: [],
-      definitions: [],
-      definitionOrder: [],
-      unmatched: 0,
-      correct: 0,
-      incorrect: 0,
-      score: 0
+      author /* Teacher who made the game */,
+      colorScheme /* "Basic" or "Rainbow" */,
+      correct: 0 /* # correct matches */,
+      definitions: [] /* Definitions (on game board) */,
+      duration /* Elapsed time of the game (in seconds) */,
+      id /* Unique, "short id" of game (use in URL) */,
+      incorrect: 0 /* # incorrect matches */,
+      instructions /* Teacher directions (to show on splash) */,
+      itemsPerBoard /* How many tiles per board */,
+      matchDeck /* Matches defined by teacher (plus additional fields) */,
+      playing: false /* Whether game is currently being played */,
+      score: 0 /* Points earned thus far */,
+      showBoard: false /* Show/hide toggle of game board */,
+      showResults: false /* Show/hide toggle of results */,
+      showSplash: true /* Show/hide toggle of modal splash screen */,
+      termCount: matchDeck.length /* Total # terms in "bank" of matches */,
+      terms: [] /* Terms (on game board) */,
+      title /* Display name of game */,
+      unmatched: 0 /* # terms still to match (on current game board) */
     };
   }
 
@@ -120,55 +119,25 @@ class MatchGame extends Component {
   }
 
   /**
-   * Get key (index) of each match and shuffle
-   * Used in randomizing display of terms
-   * @param {Array} matches
-   */
-  getTermOrder = matches => {
-    return shuffleArray([...matches.keys()]);
-  };
-
-  /**
-   * Get key (index) of each match, filter out dummy terms, and shuffle
-   * Used in randomizing display of definitions
-   * @param {Array} matches
-   */
-  getDefinitionOrder = matches => {
-    // Add index to each item (order); filter out non-matches, i.e., match.definition; limit to order and shuffle
-    return shuffleArray(
-      matches
-        .map((match, index) => {
-          return { definition: match.definition, order: index };
-        })
-        .filter(match => {
-          return match.definition;
-        })
-        .map(match => {
-          return match.order;
-        })
-    );
-  };
-
-  /**
    * Toggles boolean state properties
    * @param {string} property - Property in the state object to toggle
    */
-  toggle = property => {
-    this.setState((state, props) => {
-      return { [property]: !state[property] };
-    });
-  };
+  // toggle = property => {
+  //   this.setState((state, props) => {
+  //     return { [property]: !state[property] };
+  //   });
+  // };
 
-  /**
-   * Updates value of item in state
-   * @param {string} property - State item to update
-   * @param {any} value - New value to assign to state item
-   */
-  switch = (property, value) => {
-    this.setState((state, props) => {
-      return { [property]: value };
-    });
-  };
+  // /**
+  //  * Updates value of item in state
+  //  * @param {string} property - State item to update
+  //  * @param {any} value - New value to assign to state item
+  //  */
+  // updateState = (property, value) => {
+  //   this.setState((state, props) => {
+  //     return { [property]: value };
+  //   });
+  // };
 
   /**
    * Shows or hides all match objects, triggering transitions
@@ -176,18 +145,16 @@ class MatchGame extends Component {
    */
   showMatches = show => {
     this.setState((state, props) => {
-      /*const matches = state.matches.map(match => {
-        match.show = show;
-        return match;
-      });*/
       const terms = state.terms.map(term => {
         term.show = show;
         return term;
       });
+
       const definitions = state.definitions.map(def => {
         def.show = show;
         return def;
       });
+
       return { terms, definitions };
     });
   };
@@ -200,12 +167,10 @@ class MatchGame extends Component {
    * @param {string} id - Match id that
    */
   handleMatched = dropResult => {
-    const { id, termId, definitionId } = dropResult;
-    console.log('Remove term', termId, 'and def', definitionId);
+    const { termId, definitionId } = dropResult;
     this.setState((state, props) => {
       const terms = state.terms.map(term => {
         if (term.id === termId) {
-          console.log('term matched!');
           term.show = false;
           term.matched = true;
         }
@@ -214,75 +179,49 @@ class MatchGame extends Component {
 
       const definitions = state.definitions.map(def => {
         if (def.id === definitionId) {
-          console.log('def matched!');
           def.show = false;
           def.matched = true;
         }
         return def;
       });
-
-      /*const matches = state.matches.map(match => {
-        if (match.id === id) {
-          match.show = false;
-          match.matched = true;
-        }
-        return match;
-      });*/
       return { terms, definitions };
     });
   };
 
   /**
    * Shuffle the match deck
-   * Pick subset of matches
+   * Pick subset of matches (itemsPerBoard)
+   * Split out into terms and definitions
    * Add/Set additional "flags" needed by game, e.g., `show`, `matched`
    * Apply color scheme, i.e., assign color classes to game terms "tiles"
    * Shuffle terms and definitions, i.e., generate array of random indices
    * Calculates unmatched
-   * Update related state items
+   * Update related state items (using setState)
    */
   dealMatches = () => {
     this.setState((state, props) => {
-      const matchDeck = shuffleArray(state.matchDeck);
-      console.log('shuffling match deck');
-      console.log(matchDeck);
-      let matches = matchDeck.slice(
+      const shuffled = shuffleArray(state.matchDeck);
+      const matches = shuffled.slice(
         0,
-        Math.min(state.itemsPerBoard, matchDeck.length)
+        Math.min(state.itemsPerBoard, shuffled.length)
       );
 
       let terms = matches.map(match => {
         return { ...match, show: false, matched: false };
       });
       terms = this.addColor(terms, state.colorScheme);
-      console.log('separating out terms (with colors)...');
-      console.log(terms);
+      terms = shuffleArray(terms);
 
       let definitions = matches.map(match => {
         return { ...match, show: false, matched: false };
       });
-      console.log('separating out definitions...');
-      console.log(definitions);
+      definitions = shuffleArray(definitions);
 
-      /*matches = matches.map(match => {
-        return { ...match, show: false, matched: false };
-      }); */
-
-      matches = this.addColor(matches, state.colorScheme);
-
-      //const termOrder = this.getTermOrder(matches);
-      const termOrder = this.getTermOrder(terms);
-      //const definitionOrder = this.getDefinitionOrder(matches);
-      const definitionOrder = this.getDefinitionOrder(definitions);
-      const unmatched = definitionOrder.length;
+      const unmatched = definitions.length;
 
       return {
-        matchDeck,
-        //matches,
         terms,
-        termOrder,
         definitions,
-        definitionOrder,
         unmatched
       };
     });
@@ -295,10 +234,14 @@ class MatchGame extends Component {
    */
   handleGameStart = () => {
     console.log('Handling game start...');
-    this.switch('correct', 0);
-    this.switch('incorrect', 0);
-    this.switch('score', 0);
-    this.switch('showSplash', false);
+    this.setState((state, props) => {
+      return {
+        correct: 0,
+        incorrect: 0,
+        score: 0,
+        showSplash: false
+      };
+    });
     this.nextRound();
   };
 
@@ -307,7 +250,7 @@ class MatchGame extends Component {
    */
   handleTimerStart = () => {
     console.log('Timer started...');
-    this.switch('playing', true);
+    this.setState({ playing: true });
   };
 
   /**
@@ -315,7 +258,7 @@ class MatchGame extends Component {
    */
   handleTimerEnd = () => {
     console.log('Timer ended...');
-    this.switch('playing', false);
+    this.setState({ playing: false });
     setTimeout(() => this.handleGameOver(), 1000);
   };
 
@@ -328,8 +271,7 @@ class MatchGame extends Component {
     const { onPing } = this.props;
     const { correct, incorrect, score } = this.state;
     onPing({ correct, incorrect, score });
-    this.switch('showSplash', true);
-    this.switch('showResults', true);
+    this.setState({ showSplash: true, showResults: true });
   };
 
   /**
@@ -347,8 +289,8 @@ class MatchGame extends Component {
    * Hide game board then show after brief timeout
    */
   nextRound = () => {
-    this.switch('showBoard', false);
-    setTimeout(() => this.switch('showBoard', true), 500);
+    this.setState({ showBoard: false });
+    setTimeout(() => this.setState({ showBoard: true }), 500);
   };
 
   /**
@@ -362,59 +304,68 @@ class MatchGame extends Component {
     let unmatched; // needed beyond state settings
 
     this.setState((state, props) => {
-      let { correct, incorrect, score } = state;
-      unmatched = state.unmatched;
-      if (dropResult.matched) {
-        correct += 1;
-        unmatched -= 1;
-        score += 1;
-      } else {
-        incorrect += 1;
-        score = Math.max(score - 1, 0);
-      }
-      return { correct, incorrect, score, unmatched };
-    });
+      unmatched = state.unmatched - 1;
 
+      if (dropResult.matched) {
+        return {
+          correct: state.correct + 1,
+          unmatched,
+          score: state.score + 1
+        };
+      } else {
+        return {
+          incorrect: state.incorrect + 1,
+          score: Math.max(state.score - 1, 0)
+        };
+      }
+    });
     if (dropResult.matched) this.handleMatched(dropResult);
     if (unmatched < 1) this.showMatches(false);
   };
 
   /**
-   * Removes id from matches
-   * Recreate shuffled arrays specifying the rendor order of terms and defs
-   * If board has been cleared, start next round, i.e., nextRound()
-   * @param {string} id - Match id to remove from matches
-   * @param {string} type - What to remove, i.e., 'term','definition'
+   * Remove id from terms or definitions, reshuffling
+   * If board cleared, starts next round, i.e., nextRound()
+   *
+   * Structured like this because wrapping with setState does not work!
+   *
+   * @param {string} id - id to remove from terms'
+   * @param {string} type - type of item that it has exited
    */
   handleExited = (id, type) => {
     let roundOver = false;
     switch (type) {
       case 'term':
-        console.log('term case');
-        const terms = this.state.terms.filter(term => {
-          return term.id !== id;
-        });
-        console.log('terms (length)', terms.length);
-        const termOrder = this.getTermOrder(terms);
-        if (terms.length === 0 && this.state.definitions.length === 0) {
-          this.nextRound();
+        let terms = this.state.terms.filter(term => term.id !== id);
+        if (terms && terms.length) {
+          terms = shuffleArray(terms);
         }
-        this.setState({ terms, termOrder });
+        roundOver =
+          terms &&
+          terms.length === 0 &&
+          this.state.definitions &&
+          this.state.definitions.length === 0;
+        this.setState({ terms });
+
         break;
       case 'definition':
-        console.log('definition case');
-        const definitions = this.state.definitions.filter(def => {
-          return def.id !== id;
-        });
-        console.log('definitions (length)', definitions.length);
-        const definitionOrder = this.getDefinitionOrder(definitions);
-        if (definitions.length === 0 && this.state.terms.length === 0) {
-          this.nextRound();
+        let definitions = this.state.definitions.filter(def => def.id !== id);
+        if (definitions && definitions.length) {
+          definitions = shuffleArray(definitions);
         }
-        this.setState({ definitions, definitionOrder });
+        roundOver =
+          definitions &&
+          definitions.length === 0 &&
+          this.state.terms &&
+          this.state.terms.length === 0;
+        this.setState({ definitions });
         break;
       default:
         break;
+    }
+
+    if (roundOver) {
+      this.nextRound();
     }
   };
 
@@ -432,11 +383,8 @@ class MatchGame extends Component {
       correct,
       incorrect,
       score,
-      matches,
       terms,
-      termOrder,
-      definitions,
-      definitionOrder
+      definitions
     } = this.state;
 
     return (
@@ -457,18 +405,15 @@ class MatchGame extends Component {
         />
         <div id="match-game">
           <MatchBoard
-            wait={500}
-            show={showBoard}
-            playing={playing}
-            matches={matches}
-            terms={terms}
-            termOrder={termOrder}
-            itemsPerBoard={itemsPerBoard}
             definitions={definitions}
-            definitionOrder={definitionOrder}
+            itemsPerBoard={itemsPerBoard}
             onDrop={this.handleDrop}
             onExited={this.handleExited}
             onRoundStart={this.handleRoundStart}
+            playing={playing}
+            show={showBoard}
+            terms={terms}
+            wait={500}
           />
           {!showSplash && (
             <Timer

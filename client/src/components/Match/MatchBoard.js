@@ -3,21 +3,16 @@ import GameTransition from '../UI/GameTransition';
 import Definition from './Definition';
 import Term from './Term';
 
-class MatchBoard extends Component {
-  renderTerms({
+const MatchBoard = props => {
+  const renderTerms = ({
     itemsPerBoard,
-    matches,
-    terms,
-    definitions,
     onDrop,
     onExited,
     playing,
-    termOrder,
+    terms,
     wait
-  }) {
-    return termOrder.map((termIdx, idx) => {
-      const term = terms[termIdx];
-
+  }) => {
+    return terms.map((term, idx) => {
       /* Dynamically determine enter/exit transition times, i.e., achieve brick-laying effect */
       const timeout = {
         enter: ((idx + 1) / terms.length) * wait,
@@ -40,35 +35,33 @@ class MatchBoard extends Component {
       /* Return the terms, wrapped in transitions */
       return (
         <GameTransition
-          mountOnEnter={true}
-          unmountOnExit={false}
           appear={true}
-          key={term.id}
           in={term.show}
+          key={term.id}
+          onExited={(id, type) => onExited(term.id, 'term')}
           timeout={timeout}
           transitionStyles={transitionStyles}
-          onExited={(id, type) => onExited(term.id, 'term')}
+          unmountOnExit={false}
+          mountOnEnter={true}
         >
           <Term
-            id={term.id}
-            color={term.color}
-            term={term.term}
-            definition={term.definition}
-            itemsPerBoard={itemsPerBoard}
-            show={term.show}
             canDrag={playing}
+            color={term.color}
+            definition={term.definition}
+            id={term.id}
+            itemsPerBoard={itemsPerBoard}
             matched={term.matched}
             onDrop={onDrop}
+            show={term.show}
+            term={term.term}
           />
         </GameTransition>
       );
     });
-  }
+  };
 
-  renderDefinitions({ definitionOrder, definitions, matches, wait, onExited }) {
-    return definitionOrder.map((defIdx, idx) => {
-      const definition = definitions[defIdx];
-
+  const renderDefinitions = ({ definitions, onExited, wait }) => {
+    return definitions.map((def, idx) => {
       const timeout = {
         enter: ((idx + 1) / definitions.length) * wait,
         exit: wait
@@ -93,77 +86,75 @@ class MatchBoard extends Component {
       /* Return the terms, wrapped in transitions */
       return (
         <GameTransition
-          mountOnEnter={true}
-          unmountOnExit={false}
           appear={true}
-          key={definition.id}
-          in={definition.show}
+          in={def.show}
+          key={def.id}
+          mountOnEnter={true}
+          onExited={(id, type) => onExited(def.id, 'definition')}
           timeout={timeout}
           transitionStyles={transitionStyles}
-          onExited={(id, type) => onExited(definition.id, 'definition')}
+          unmountOnExit={false}
         >
           <Definition
-            id={definition.id}
-            definition={definition.definition}
-            term={definition.term}
-            show={definition.show}
-            matched={definition.matched}
+            definition={def.definition}
+            id={def.id}
+            matched={def.matched}
+            show={def.show}
+            term={def.term}
           />
         </GameTransition>
       );
     });
-  }
+  };
 
-  render() {
-    // eslint-disable-next-line
-    const { show, itemsPerBoard, onRoundStart, wait } = this.props;
-    const terms = this.renderTerms({ ...this.props });
-    const definitions = this.renderDefinitions({ ...this.props });
+  // eslint-disable-next-line
+  const { itemsPerBoard, onRoundStart, show, wait } = props;
+  const terms = renderTerms({ ...props });
+  const definitions = renderDefinitions({ ...props });
 
-    /* Transition timeouts */
-    const timeout = {
-      enter: wait / itemsPerBoard,
-      exit: wait / itemsPerBoard
-    };
+  /* Transition timeouts */
+  const timeout = {
+    enter: wait / itemsPerBoard,
+    exit: wait / itemsPerBoard
+  };
 
-    /* Define object for the following states: 'default', 'entering', 'entered', 'exiting', 'exited' */
-    const transitionStyles = {
-      default: { opacity: 0 },
-      entering: { opacity: 0 },
-      entered: {
-        transition: `all ${timeout.enter}ms cubic-bezier(.17,.67,.83,.67)`,
-        opacity: 1.0
-      },
-      exiting: {
-        transition: `all ${timeout.exit}ms cubic-bezier(.17,.67,.83,.67)`,
-        opacity: 0.1
-      },
-      exited: { opacity: 0 }
-    };
+  /* Define object for the following states: 'default', 'entering', 'entered', 'exiting', 'exited' */
+  const transitionStyles = {
+    default: { opacity: 0 },
+    entering: { opacity: 0 },
+    entered: {
+      transition: `all ${timeout.enter}ms cubic-bezier(.17,.67,.83,.67)`,
+      opacity: 1.0
+    },
+    exiting: {
+      transition: `all ${timeout.exit}ms cubic-bezier(.17,.67,.83,.67)`,
+      opacity: 0.1
+    },
+    exited: { opacity: 0 }
+  };
 
-    const tileClass = `tiles-${itemsPerBoard}`;
+  const tileClass = `tiles-${itemsPerBoard}`;
 
-    return (
-      <GameTransition
-        mountOnEnter={false}
-        unmountOnExit={true}
-        appear={true}
-        in={show}
-        timeout={timeout}
-        transitionStyles={transitionStyles}
-        onEnter={onRoundStart}
-      >
-        <div id="match-board">
-          <div id="terms" className={tileClass}>
-            {terms}
-          </div>
-          <div id="definitions" className={tileClass}>
-            {definitions}
-          </div>
+  return (
+    <GameTransition
+      appear={true}
+      in={show}
+      mountOnEnter={false}
+      onEnter={onRoundStart}
+      timeout={timeout}
+      transitionStyles={transitionStyles}
+      unmountOnExit={true}
+    >
+      <div id="match-board">
+        <div id="terms" className={tileClass}>
+          {terms}
         </div>
-      </GameTransition>
-    );
-  }
-}
+        <div id="definitions" className={tileClass}>
+          {definitions}
+        </div>
+      </div>
+    </GameTransition>
+  );
+};
 
 export default MatchBoard;
