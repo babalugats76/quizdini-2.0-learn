@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import GameTransition from '../UI/GameTransition';
 import Definition from './Definition';
 import Term from './Term';

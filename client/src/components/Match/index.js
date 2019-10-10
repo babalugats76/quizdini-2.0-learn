@@ -1,12 +1,12 @@
-import '../../match.scss';
+import "../../match.scss";
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
-import { isEmpty } from './utils';
-import Loading from '../UI/Loading';
-import MatchGame from './MatchGame';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import * as actions from "../../actions";
+import { isEmpty } from "./utils";
+import Loading from "../UI/Loading";
+import MatchGame from "./MatchGame";
 
 const Error = ({ error }) => {
   return (
@@ -41,25 +41,25 @@ class Match extends Component {
     const { matchGame: { game } = {} } = this.props;
     if (isEmpty(game)) {
       return setTimeout(() => {
-        this.props.history.push('/404', {
+        this.props.history.push("/404", {
           message: {
-            header: 'Game Not Found',
-            content: `"${matchId}" is not a valid game id`
+            header: "Game Not Found...",
+            content: `"${matchId}" is not a valid match game id`
           }
         });
       }, 500);
     }
     const { title } = game;
-    const pageTitle = [process.env.REACT_APP_WEBSITE_NAME, title].join(' | ');
+    const pageTitle = [process.env.REACT_APP_WEBSITE_NAME, title].join(" | ");
     document.title = pageTitle;
   }
 
   async handlePing(results) {
-    console.log('results in handlePing...');
+    console.log("results in handlePing...");
     console.log(results);
     const { firePing } = this.props;
     const { matchId } = this.state;
-    firePing(matchId, 'M', results);
+    firePing(matchId, "M", results);
   }
 
   renderGame({ matchGame }) {
