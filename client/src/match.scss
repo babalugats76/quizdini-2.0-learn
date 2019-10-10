@@ -1,4 +1,4 @@
-@import "./variables.scss";
+@import './variables.scss';
 
 /*-------------------
   Splash
@@ -31,8 +31,7 @@
       font-size: 2.6em;
       line-height: 1.2;
       font-family: $cabin;
-      font-weight: 600;
-      font-style: italic;
+      font-weight: 500;
     }
     .author,
     #options,
@@ -197,18 +196,18 @@
 .term {
   /* Colors for tiles */
   $tileColors: (
-    ("red", $red, $white, $white),
-    ("orange", $orange, $white, $white),
-    ("yellow", $yellow, $graphite, $white),
-    ("lime", $lime, $graphite, $white),
-    ("green", $green, $white, $white),
-    ("cyan", $cyan, $graphite, $white),
-    ("blue", $blue, $white, $white),
-    ("purple", $purple, $white, $white),
-    ("magenta", $magenta, $white, $white),
-    ("gray", $gray, $white, $white),
-    ("navy", $navy, $white, $white),
-    ("teal", $teal, $white, $white)
+    ('red', $red, $white, $white),
+    ('orange', $orange, $white, $white),
+    ('yellow', $yellow, $graphite, $white),
+    ('lime', $lime, $graphite, $white),
+    ('green', $green, $white, $white),
+    ('cyan', $cyan, $graphite, $white),
+    ('blue', $blue, $white, $white),
+    ('purple', $purple, $white, $white),
+    ('magenta', $magenta, $white, $white),
+    ('gray', $gray, $white, $white),
+    ('navy', $navy, $white, $white),
+    ('teal', $teal, $white, $white)
   );
 
   @each $color, $background, $textColor, $borderColor in $tileColors {
@@ -352,7 +351,7 @@
   }
 
   .term-preview {
-    display: "inline-block";
+    display: 'inline-block';
     height: 2.33em;
     min-width: 93px;
     max-width: calc(
