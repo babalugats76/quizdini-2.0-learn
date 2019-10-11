@@ -19,7 +19,7 @@ const MatchSplash = ({
         <section id="splash-banner">
           <img
             className="game-banner"
-            src="https://loremflickr.com/800/250"
+            src="https://loremflickr.com/900/250"
             alt="Awesome Quizdini Match Banner Goes Here..."
           />
         </section>

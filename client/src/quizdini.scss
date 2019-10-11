@@ -10,6 +10,77 @@
   Self-Hosted Fonts
 --------------------*/
 
+@font-face {
+  font-family: 'fontspring_demo_-_marcher_aBd';
+  src: url('/fonts/fontspring-demo-marcheralt-bold-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcheralt-bold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+
+
+
+@font-face {
+  font-family: 'fontspring_demo_-_marcher_aBd';
+  src: url('/fonts/fontspring-demo-marcheralt-medium-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcheralt-medium-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+
+
+
+@font-face {
+  font-family: 'fontspring_demo_-_marcher_aRg';
+  src: url('/fonts/fontspring-demo-marcheralt-regular-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcheralt-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+
+@font-face {
+  font-family: 'fontspring_demo_-_marcher_SBd';
+  src: url('/fonts/fontspring-demo-marcheralt-semibold-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcheralt-semibold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+
+@font-face {
+  font-family: 'marcherextrabold';
+  src: url('/fonts/fontspring-demo-marcher-extrabold-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcher-extrabold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'fontspring_demo_-_marcher_aLt';
+  src: url('/fonts/fontspring-demo-marcheralt-light-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcheralt-light-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'fontspring_demo_-_marcher_eBd';
+  src: url('/fonts/fontspring-demo-marcher-extrabolditalic-webfont.woff2') format('woff2'),
+       url('/fonts/fontspring-demo-marcher-extrabolditalic-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
 /* cabin-regular - latin */
 @font-face {
   font-family: 'Cabin';
@@ -207,7 +278,7 @@ button {
 .modal-show ~ .modal-overlay {
   opacity: 1;
   visibility: visible;
-  background-color: $black-alpha3;
+  background-color: $black-alpha6;
 }
 
 /*-------------------
@@ -223,7 +294,6 @@ button {
   h1 {
     font-family: $cabin;
     font-weight: 600;
-    font-style: italic;
     font-size: 3em;
     text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.1);
   }
@@ -257,7 +327,6 @@ button {
     font-family: $cabin;
     font-size: 3em;
     font-weight: 600;
-    font-style: italic;
     text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.1);
   }
 
