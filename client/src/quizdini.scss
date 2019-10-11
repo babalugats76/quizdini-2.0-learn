@@ -1,14 +1,22 @@
-@import "./variables";
+@import './variables';
 
 /*-------------------
   Basic Reset
 --------------------*/
 
-@import "./normalize.css";
+@import './normalize.css';
 
 /*-------------------
   Self-Hosted Fonts
 --------------------*/
+
+@font-face {
+  font-family: 'marcher-extrabolditalic';
+  src: url('/fonts/marcher-extrabolditalic-webfont.woff2') format('woff2'),
+    url('/fonts/marcher-extrabolditalic-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
 /* lexend-deca-regular - latin */
 @font-face {
@@ -16,8 +24,9 @@
   font-style: normal;
   font-weight: 400;
   src: local('Lexend Deca Regular'), local('LexendDeca-Regular'),
-       url('/fonts/lexend-deca-v1-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('/fonts/lexend-deca-v1-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/fonts/lexend-deca-v1-latin-regular.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url('/fonts/lexend-deca-v1-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 /* fira-code-regular - latin */
@@ -25,15 +34,15 @@
   font-family: 'Fira Code';
   font-style: normal;
   font-weight: 400;
-  src: local(''),
-       url('/fonts/fira-code-v5-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('/fonts/fira-code-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local(''), url('/fonts/fira-code-v5-latin-regular.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url('/fonts/fira-code-v5-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 @font-face {
   font-family: 'helsinkiregular';
   src: url('/fonts/helsinki-webfont.woff2') format('woff2'),
-       url('/fonts/helsinki-webfont.woff') format('woff');
+    url('/fonts/helsinki-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -66,7 +75,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: $cabin;
+  font-family: $marcher;
 }
 
 p {
@@ -193,7 +202,7 @@ button {
   text-align: center;
 
   h1 {
-    font-family: $cabin;
+    font-family: $marcher;
     font-weight: 600;
     font-size: 3em;
     text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.1);
@@ -225,7 +234,7 @@ button {
   text-align: center;
 
   h1 {
-    font-family: $cabin;
+    font-family: $marcher;
     font-size: 3em;
     font-weight: 600;
     text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.1);
@@ -249,7 +258,7 @@ button {
 --------------------*/
 
 .loading {
-  font-family: $cabin;
+  font-family: $marcher;
   font-weight: bold;
   color: $white;
   text-align: center;

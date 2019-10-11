@@ -1,4 +1,4 @@
-@import "./variables.scss";
+@import './variables.scss';
 
 /*-------------------
   Splash
@@ -30,14 +30,12 @@
       margin: auto;
       font-size: 3em;
       line-height: 1.2;
-      font-family: $cabin;
-      font-family: "fontspring_demo_-_marcher_eBd";
-      font-weight: 800;
+      font-family: $marcher;
     }
     .author,
     #options,
     .instructions {
-      color: #555;
+      color: $black-alpha6;
     }
     .author {
       font-size: 1.1em;
@@ -47,7 +45,24 @@
       display: flex;
       flex-direction: row;
       justify-content: space-evenly;
-      padding: 0.5em 0;
+      padding: 0.5em;
+      color: $black-alpha6;
+      span {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5em 0.3em;
+        font-size: 1.1em;
+        .icon {
+          width: 1.3em;
+          height: 1.3em;
+          margin-right: 0.3em;
+          path {
+            fill: $black-alpha6;
+          }
+        }
+      }
     }
     #score {
       font-weight: bold;
@@ -199,18 +214,18 @@
 .term {
   /* Colors for tiles */
   $tileColors: (
-    ("red", $red, $white, $white),
-    ("orange", $orange, $white, $white),
-    ("yellow", $yellow, $graphite, $white),
-    ("lime", $lime, $graphite, $white),
-    ("green", $green, $white, $white),
-    ("cyan", $cyan, $graphite, $white),
-    ("blue", $blue, $white, $white),
-    ("purple", $purple, $white, $white),
-    ("magenta", $magenta, $white, $white),
-    ("gray", $gray, $white, $white),
-    ("navy", $navy, $white, $white),
-    ("teal", $teal, $white, $white)
+    ('red', $red, $white, $white),
+    ('orange', $orange, $white, $white),
+    ('yellow', $yellow, $graphite, $white),
+    ('lime', $lime, $graphite, $white),
+    ('green', $green, $white, $white),
+    ('cyan', $cyan, $graphite, $white),
+    ('blue', $blue, $white, $white),
+    ('purple', $purple, $white, $white),
+    ('magenta', $magenta, $white, $white),
+    ('gray', $gray, $white, $white),
+    ('navy', $navy, $white, $white),
+    ('teal', $teal, $white, $white)
   );
 
   @each $color, $background, $textColor, $borderColor in $tileColors {
@@ -354,7 +369,7 @@
   }
 
   .term-preview {
-    display: "inline-block";
+    display: 'inline-block';
     height: 2.33em;
     min-width: 93px;
     max-width: calc(

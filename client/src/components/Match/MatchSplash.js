@@ -1,5 +1,6 @@
-import React from "react";
-import Modal from "../UI/Modal";
+import React from 'react';
+import Modal from '../UI/Modal';
+import Icon from '../UI/SVG';
 //import logo from "../../../src/logo.svg";
 
 const MatchSplash = ({
@@ -36,9 +37,13 @@ const MatchSplash = ({
           {!showResults && (
             <div id="options">
               <span className="items-per-board">
-                {itemsPerBoard} items per board
+                <Icon name="grid" />
+                {itemsPerBoard} per board
               </span>
-              <span className="duration">{duration} seconds</span>
+              <span className="duration">
+                <Icon name="clock" />
+                {duration} seconds
+              </span>
             </div>
           )}
           {!showResults && <div className="instructions">{instructions}</div>}
@@ -48,8 +53,9 @@ const MatchSplash = ({
             id="play"
             onClick={onGameStart}
             onKeyPress={onGameStart}
-            tabIndex={1}>
-            {showResults ? "Play Again" : "Play Game"}
+            tabIndex={1}
+          >
+            {showResults ? 'Play Again' : 'Play Game'}
           </button>
         </section>
       </div>
