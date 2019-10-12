@@ -5,17 +5,13 @@
 - Client
 
   - CSS / Style
-    - _Try replacing Helsinki with something else_
     - Create centralized stylesheet and then match-specific one
   - `public`
     - Remove unnecessary `manifest.json` file
-  - Landing
-    - Stub out a basic `Landing Page` which has placeholders for games and links to the Teacher Site, etc.
   - MatchGame
     - Add modern game logo
-  - Refine Splash
-  - Refine Modal
-    - Top and margin (for scrolling)?
+  - MatchSplash
+    - Add Archive icon and text to Splash  
 
 - Kay Items
   - Draft RFP for Kay
