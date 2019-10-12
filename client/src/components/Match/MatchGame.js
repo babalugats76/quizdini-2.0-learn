@@ -192,7 +192,7 @@ class MatchGame extends Component {
     this.setState((state, props) => {
       // Shuffle all available matches
       const shuffled = shuffleArray(state.matchDeck);
-      
+
       // Grab just necessary #
       const matches = shuffled.slice(
         0,
@@ -209,7 +209,7 @@ class MatchGame extends Component {
 
       // Add colors (to terms only)
       terms = this.addColor(terms, state.colorScheme);
-      
+
       // Shuffle
       terms = shuffleArray(terms);
       definitions = shuffleArray(definitions);
@@ -386,6 +386,7 @@ class MatchGame extends Component {
       correct,
       incorrect,
       score,
+      termCount,
       terms,
       definitions
     } = this.state;
@@ -404,6 +405,7 @@ class MatchGame extends Component {
           score={score}
           showResults={showResults}
           showSplash={showSplash}
+          termCount={termCount}
           title={title}
         />
         <div id="match-game">

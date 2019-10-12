@@ -12,6 +12,7 @@ const MatchSplash = ({
   score,
   showResults,
   showSplash,
+  termCount,
   title
 }) => {
   return (
@@ -36,12 +37,16 @@ const MatchSplash = ({
           )}
           {!showResults && (
             <div id="options">
+              <span className="term-count">
+                <Icon name="archive" />
+                {termCount} terms
+              </span>
               <span className="items-per-board">
                 <Icon name="grid" />
                 {itemsPerBoard} per board
               </span>
               <span className="duration">
-                <Icon name="clock" />
+                <Icon name="watch" />
                 {duration} seconds
               </span>
             </div>

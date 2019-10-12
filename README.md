@@ -10,8 +10,7 @@
     - Remove unnecessary `manifest.json` file
   - MatchGame
     - Add modern game logo
-  - MatchSplash
-    - Add Archive icon and text to Splash  
+  - Figure out new relic configuration for development
 
 - Kay Items
   - Draft RFP for Kay
@@ -189,6 +188,7 @@ Now that a basic project is in place, bring forward previous code for both the c
 ```
 static HAS_HTML = new RegExp('<[^>]*>');
 ```
+
 ```
   /**
    * Toggles boolean state properties
@@ -200,6 +200,7 @@ static HAS_HTML = new RegExp('<[^>]*>');
     });
   };
 ```
+
 ```
   /**
    * Updates value of item in state
