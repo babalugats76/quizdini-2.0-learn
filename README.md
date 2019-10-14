@@ -14,9 +14,9 @@
 
 - Kay Items
   - Draft RFP for Kay
-  - Colors
-  - Fonts
-    - Term / Definition / Monospace (When code)
+    - Colors
+    - Fonts
+       - Term / Definition / Monospace (When code)
 
 ## Summary
 
