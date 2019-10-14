@@ -8,7 +8,6 @@ import reduxThunk from 'redux-thunk';
 import App from './components/App';
 import reducers from './reducers';
 import { BrowserRouter as Router } from 'react-router-dom';
-import * as serviceWorker from './serviceWorker';
 
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 
@@ -20,5 +19,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('quizdini')
 );
-
-serviceWorker.unregister();
