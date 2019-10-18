@@ -6,6 +6,8 @@
 
   - CSS / Style
     - Create centralized stylesheet and then match-specific one
+    - Create variables for media queries; experiment mapping em to px
+    - Using variables, dynamically construct 5 separate media queries--take from semantic breakpoint documentation--for the match game; see if font-size scaling can be removed through other means of doing the calculations; consider where rems are appropriate
   - `public`
     - Remove unnecessary `manifest.json` file
   - MatchGame
