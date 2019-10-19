@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as actions from "../../actions";
 import { isEmpty } from "./utils";
-import Loading from "../UI/Loading";
+import Loader from "../UI/Loader";
 import MatchGame from "./MatchGame";
 
 const Error = ({ error }) => {
@@ -65,7 +65,8 @@ class Match extends Component {
   renderGame({ matchGame }) {
     const { error, loading, game } = matchGame;
     if (error) return <Error error={error} />;
-    if (loading || isEmpty(game)) return <Loading />;
+    return <Loader content="LOADING..." />
+    if (loading || isEmpty(game)) return <Loader content="LOADING..." />;
     return (
       <MatchGame game={game} onPing={results => this.handlePing(results)} />
     );

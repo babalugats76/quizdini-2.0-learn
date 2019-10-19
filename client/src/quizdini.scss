@@ -137,6 +137,7 @@ button {
   .flex-center {
     display: flex;
     flex-direction: column;
+    align-items: center;
     margin: auto !important;
   }
 }
@@ -254,12 +255,11 @@ button {
 }
 
 /*-------------------
-  loading / Spinner
+  Loader / Spinner
 --------------------*/
 
 .loading {
   font-family: $marcher;
-  font-weight: bold;
   color: $white;
   text-align: center;
 }
