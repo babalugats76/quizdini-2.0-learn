@@ -65,7 +65,6 @@ class Match extends Component {
   renderGame({ matchGame }) {
     const { error, loading, game } = matchGame;
     if (error) return <Error error={error} />;
-    return <Loader content="LOADING..." />
     if (loading || isEmpty(game)) return <Loader content="LOADING..." />;
     return (
       <MatchGame game={game} onPing={results => this.handlePing(results)} />
