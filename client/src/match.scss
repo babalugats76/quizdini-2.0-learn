@@ -234,7 +234,7 @@
     }
     &.#{$color}:hover,
     &.#{$color}.dragging {
-      border: 2px solid $borderColor;
+      /*border: 2px solid $borderColor;*/
     }
     &.#{$color}.dragging {
       /* If dragging need be styled */
@@ -265,7 +265,7 @@
   background-color: $gray-light-light;
   touch-action: none;
   background-color: $logo-white;
-  background-image: linear-gradient(
+  /*background-image: linear-gradient(
       90deg,
       transparent 23px,
       $lined-paper-red 23px,
@@ -273,10 +273,10 @@
       transparent 25px
     ),
     linear-gradient($lined-paper-blue 2px, transparent 2px);
-  background-size: 100% 2em;
+  background-size: 100% 2em;*/
 
   &.is-over {
-    background-image: unset;
+    /*background-image: unset;*/
     background-color: $quizdini-blue !important;
     opacity: 0.6 !important;
     > .definition-text {
@@ -369,14 +369,14 @@
 
   .term-preview {
     display: 'inline-block';
-    height: 2.33em;
+    height: calc(2.33em * .9);
     min-width: 93px;
     max-width: calc(
       100vw - 0.6em
     ); // cap the width (just in case `fit-content` is not supported
-    margin: 0.3em;
-    padding: 0.4em;
-    border-radius: 0.5em;
+    margin: calc(0.3em * .9);
+    padding: calc(0.4em * .9);
+    border-radius: calc(0.5em * .9);
     line-height: 1.4;
     text-align: center;
     width: fit-content;
