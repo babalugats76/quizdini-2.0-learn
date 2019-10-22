@@ -11,8 +11,10 @@
   overflow: hidden;
   background-color: white;
   color: $logo-black;
+  max-height: 550px;
 
   #splash-banner {
+    flex: 0 0 auto;
     .game-banner {
       width: 100%;
       height: auto;
@@ -22,14 +24,16 @@
   }
 
   #splash-details {
+    flex: 0 1 auto;
     background-color: rgba(255, 255, 255, 0.3);
     padding: 1.5em 1.3em;
     line-height: 1.3;
+    overflow-y: auto;
     .title {
       max-width: 15ch;
       margin: auto;
-      font-size: 3em;
-      line-height: 1.2;
+      font-size: 2.6em;
+      line-height: 1;
       font-family: $marcher;
     }
     .author,
@@ -71,7 +75,7 @@
       .circle {
         display: inline-block;
         line-height: 0px;
-        border-radius: 50%;
+        border-radius: 2000px;
         border: 0.1em solid $black-alpha4;
         background-color: $bright-green;
         padding: 0.25em;
@@ -88,6 +92,7 @@
     }
   }
   #splash-footer {
+    flex: 0 0 auto;
     padding: 1.5em 0.75em;
     background-color: $cadet-grey;
     button#play {
@@ -265,18 +270,8 @@
   background-color: $gray-light-light;
   touch-action: none;
   background-color: $logo-white;
-  /*background-image: linear-gradient(
-      90deg,
-      transparent 23px,
-      $lined-paper-red 23px,
-      $lined-paper-red 25px,
-      transparent 25px
-    ),
-    linear-gradient($lined-paper-blue 2px, transparent 2px);
-  background-size: 100% 2em;*/
 
   &.is-over {
-    /*background-image: unset;*/
     background-color: $quizdini-blue !important;
     opacity: 0.6 !important;
     > .definition-text {
@@ -329,7 +324,7 @@
 /* mobile-ish breakpoint */
 @media screen and (max-width: 47.99em) {
   #match-game {
-    font-size: 90%;
+    font-size: 100%;
   }
   #match-board {
     /* 1 column */
@@ -342,7 +337,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0.5em;
+    padding: 0.5rem;
     margin: 0 auto;
     text-align: center;
     justify-content: center;
@@ -352,12 +347,12 @@
   .term,
   .definition {
     flex: 0 0 auto;
-    height: 2.33em;
+    height: 2.33rem;
     min-width: 93px;
-    max-width: calc(100vw - 0.6em);
-    margin: 0.3em;
-    padding: 0.4em;
-    border-radius: 0.5em;
+    max-width: calc(100vw - 0.6rem);
+    margin: 0.3rem;
+    padding: 0.4rem;
+    border-radius: 0.5rem;
     line-height: 1.4;
     text-align: center;
     align-items: center;
@@ -369,14 +364,14 @@
 
   .term-preview {
     display: 'inline-block';
-    height: calc(2.33em * .9);
+    height: 2.33em;
     min-width: 93px;
     max-width: calc(
-      100vw - 0.6em
+      100vw - 0.6rem
     ); // cap the width (just in case `fit-content` is not supported
-    margin: calc(0.3em * .9);
-    padding: calc(0.4em * .9);
-    border-radius: calc(0.5em * .9);
+    margin: 0.3rem;
+    padding: 0.4rem;
+    border-radius: 0.5rem;
     line-height: 1.4;
     text-align: center;
     width: fit-content;
@@ -410,24 +405,28 @@
   }
   .definition-text {
     font-size: 0.9em;
-    margin-top: 0.1em;
+    margin-top: 0.1rem;
   }
 }
 
+/* Tabletish */
 @media screen and (min-width: 48em) and (max-width: 74.99em) {
+  
   #match-game {
     font-size: 100%;
   }
 
   .term-preview {
     z-index: 151;
-    height: 4.67em;
+    min-height: 4.67rem;
     &.tiles-4,
     &.tiles-6 {
-      width: calc(50% - (0.25em + 0.8em));
+      flex-basis: calc(50% - (0.25rem + 0.8rem));
+      height: calc((90vh - (2rem + (6 * .2rem))) / 6);
     }
     &.tiles-9 {
-      width: calc(33% - (0.167em + 0.8em));
+      flex-basis: calc(33% - (0.167rem + 0.8rem));
+      height: calc((90vh - (2rem + (6 * .2rem))) / 6);
     }
   }
 
@@ -443,7 +442,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0.5em;
+    padding: 0.5rem;
     margin: 0 auto;
     align-content: center;
     justify-content: center;
@@ -451,13 +450,15 @@
     &.tiles-6 {
       .term,
       .definition {
-        flex-basis: calc(50% - (0.25em + 0.4em));
+        flex-basis: calc(50% - (0.25rem + 0.4rem));
+        height: calc((90vh - (2rem + (6 * .2rem))) / 6);
       }
     }
     &.tiles-9 {
       .term,
       .definition {
-        flex-basis: calc(33% - (0.167em + 0.4em));
+        flex-basis: calc(33% - (0.167rem + 0.4rem));
+        height: calc((90vh - (2rem + (6 * .2rem))) / 6);
       }
     }
   }
@@ -468,10 +469,10 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: inherit;
-    height: 4.67em;
-    margin: 0.2em;
-    padding: 0.6em;
-    border-radius: 0.5em;
+    min-height: 4.67rem;
+    margin: 0.2rem;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
     line-height: 1.4;
     text-align: center;
     overflow: hidden;
@@ -508,18 +509,24 @@
 
 @media screen and (min-width: 75em) {
   #match-game {
-    font-size: 110%;
+    font-size: 100%;
   }
 
   .term-preview {
     z-index: 151;
-    height: 9.33em;
-    &.tiles-4,
+    min-height: 9.33rem;
+    &.tiles-4 {
+      flex-basis: calc((50% / 2) - (0.25rem + 0.8rem));
+      height: calc((90vh - (1rem - (.4rem * 2))) / 2);
+    }
     &.tiles-6 {
-      width: calc((50% / 2) - (0.25em + 0.8em));
+      flex-basis: calc((50% / 2) - (0.25rem + 0.8rem));
+      height: calc((90vh - (1rem - (.4rem * 3))) / 3);
     }
     &.tiles-9 {
-      width: calc((33% / 2) - (0.167em + 0.8em));
+      background-color: green !important;
+      width: calc((50% - (2rem + (4 * .2rem))) / 3);
+      height: calc((90vh - (1rem - (.4rem * 3))) / 3);
     }
   }
 
@@ -534,21 +541,29 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0.5em;
+    padding: 0.5rem;
     margin: 0 auto;
     align-content: center;
     justify-content: center;
-    &.tiles-4,
+    &.tiles-4 {
+      .term, 
+      .definition {
+        flex-basis: calc(50% - (0.25rem + 0.4rem));
+        height: calc((90vh - (1rem - (.4rem * 2))) / 2);
+      }
+    }
     &.tiles-6 {
       .term,
       .definition {
-        flex-basis: calc(50% - (0.25em + 0.4em));
+        flex-basis: calc(50% - (0.25rem + 0.4rem));
+        height: calc((90vh - (1rem - (.4rem * 3))) / 3);
       }
     }
     &.tiles-9 {
       .term,
       .definition {
-        flex-basis: calc(33% - (0.167em + 0.4em));
+        flex-basis: calc((100% - (1rem + (4 * .2rem))) / 3);
+        height: calc((90vh - (1rem - (.4rem * 3))) / 3);
       }
     }
   }
@@ -560,10 +575,10 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: inherit;
-    height: 9.33em;
-    margin: 0.2em;
-    padding: 0.6em;
-    border-radius: 0.5em;
+    min-height: 9.33rem;
+    margin: 0.2rem;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
     line-height: 1.4;
     text-align: center;
     overflow: hidden;
@@ -600,8 +615,8 @@
     font-size: 1.3em;
   }
   #timer {
-    width: 8em;
-    height: 8em;
+    width: 8rem;
+    height: 8rem;
     #timer-score {
       font-size: 4em;
     }
