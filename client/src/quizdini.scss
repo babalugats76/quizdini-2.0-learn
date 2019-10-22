@@ -151,14 +151,14 @@ button {
   top: 50%;
   left: 50%;
   height: auto;
-  max-height: 100vh;
+  /*max-height: 100vh;*/
   min-width: 18em;
   max-width: 32em;
   z-index: 2000;
   visibility: hidden;
   backface-visibility: hidden;
   transform: translateX(-50%) translateY(-50%);
-  overflow: auto;
+  /*overflow: auto;*/
 }
 
 .modal-content {
