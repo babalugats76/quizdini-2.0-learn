@@ -509,27 +509,11 @@
 }
 
 @media screen and (min-width: 75em) {
-  #match-game {
-    font-size: 115%;
+  
+  /* Dynamically scale font */
+  #match-game, .term-preview {
+    font-size: 115%; // For browsers which don't support calc()
     font-size: calc(1rem + ((1vw - 0.75em) * 0.8571));
-  }
-
-  .term-preview {
-    z-index: 151;
-    min-height: 9.33rem;
-    &.tiles-4 {
-      flex-basis: calc((50% / 2) - (0.25rem + 0.8rem));
-      height: calc((90vh - (1rem - (.4rem * 2))) / 2);
-    }
-    &.tiles-6 {
-      flex-basis: calc((50% / 2) - (0.25rem + 0.8rem));
-      height: calc((90vh - (1rem - (.4rem * 3))) / 3);
-    }
-    &.tiles-9 {
-      background-color: green !important;
-      width: calc((50% - (2rem + (4 * .2rem))) / 3);
-      height: calc((90vh - (1rem - (.4rem * 3))) / 3);
-    }
   }
 
   #match-board {
@@ -537,38 +521,41 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
   }
-  #terms,
-  #definitions {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    padding: 0.5rem;
-    margin: 0 auto;
-    align-content: center;
-    justify-content: center;
-    &.tiles-4 {
-      .term, 
-      .definition {
-        flex-basis: calc(50% - (0.25rem + 0.4rem));
-        height: calc((90vh - (1rem - (.4rem * 2))) / 2);
-      }
-    }
-    &.tiles-6 {
-      .term,
-      .definition {
-        flex-basis: calc(50% - (0.25rem + 0.4rem));
-        height: calc((90vh - (1rem - (.4rem * 3))) / 3);
-      }
-    }
-    &.tiles-9 {
-      .term,
-      .definition {
-        flex-basis: calc((100% - (1rem + (4 * .2rem))) / 3);
-        height: calc((90vh - (1rem - (.4rem * 3))) / 3);
-      }
-    }
-  }
+
+   #terms,
+   #definitions {
+     display: flex;
+     flex-direction: row;
+     flex-wrap: wrap;
+     width: 100%;
+     padding: 0.5em;
+     margin: 0 auto;
+     align-content: center;
+     justify-content: center;
+     &.tiles-4 {
+       .term, 
+       .definition {
+         flex-basis: calc(50% - (0.25em + 0.4em));
+         height: calc((90vh - (1em - (.4em * 2))) / 2);
+       }
+     }
+     &.tiles-6 {
+       .term,
+       .definition {
+         flex-basis: calc(50% - (0.25em + 0.4em));
+         height: calc((90vh - (1em - (.4em * 3))) / 3);
+       }
+     }
+     &.tiles-9 {
+       .term,
+       .definition {
+         /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+         flex-basis: calc((100% - 2.2em) / 3);
+         /* (90% vw - (vert. cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+         height: calc((90vh - 2.2em) / 3);
+       }
+     }
+   }
 
   .term,
   .definition,
@@ -577,10 +564,10 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: inherit;
-    min-height: 9.33rem;
-    margin: 0.2rem;
-    padding: 0.6rem;
-    border-radius: 0.5rem;
+    min-height: 9.33em;
+    margin: 0.2em;
+    padding: 0.6em;
+    border-radius: 0.5em;
     line-height: 1.4;
     text-align: center;
     overflow: hidden;
@@ -613,14 +600,38 @@
     word-break: break-word;
     letter-spacing: 1px;
   }
+
   .definition-text {
     font-size: 1.3em;
   }
-  #timer {
-    width: 8rem;
-    height: 8rem;
-    #timer-score {
-      font-size: 4em;
+
+  .term-preview {
+    z-index: 151;
+    min-height: 9.33em;
+    &.tiles-4 {
+      flex-basis: calc((50% / 2) - (0.25em + 0.8em));
+      height: calc((90vh - (1em - (.4em * 2))) / 2);
+    }
+    &.tiles-6 {
+      flex-basis: calc((50% / 2) - (0.25em + 0.8em));
+      height: calc((90vh - (1em - (.4em * 3))) / 3);
+    }
+    &.tiles-9 {
+      background-color: yellow !important;
+      color: black;
+      /* (50% parent - (hor. inner cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+      width: calc((50% - 3.2em)  / 3);
+      /* (90% vw - (vert. inner cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      height: calc((90vh - 2.2em) / 3);
     }
   }
+
+  #timer {
+    width: 6em;
+    height: 6em;
+    #timer-score {
+      font-size: 3em;
+    }
+  }
+
 }
