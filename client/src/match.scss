@@ -120,8 +120,8 @@
 
 #timer {
   position: fixed;
-  width: 5em;
-  height: 5em;
+  width: 6em;
+  height: 6em;
   bottom: 1em;
   right: 1em;
   z-index: 200;
@@ -168,7 +168,7 @@
   color: $white;
   font-family: $helsinki;
   font-weight: bold;
-  font-size: 2em;
+  font-size: 3em;
   letter-spacing: 2px;
   transition: width 1s ease-in-out;
 }
@@ -213,6 +213,8 @@
 }
 
 .term-preview {
+  background-color: $yellow;
+  color: $logo-black;
   opacity: 0.5;
 }
 
@@ -324,8 +326,9 @@
 
 /* mobile-ish breakpoint */
 @media screen and (max-width: 47.99em) {
-  #match-game {
-    font-size: 100%;
+  #match-game, .term-preview {
+    font-size: 87.5%;
+    font-size: calc(0.8125rem + ((1vw - 0.2em) * 0.2232));
   }
   #match-board {
     /* 1 column */
@@ -338,7 +341,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.5em;
     margin: 0 auto;
     text-align: center;
     justify-content: center;
@@ -348,12 +351,12 @@
   .term,
   .definition {
     flex: 0 0 auto;
-    height: 2.33rem;
+    height: 2.33em;
     min-width: 93px;
-    max-width: calc(100vw - 0.6rem);
-    margin: 0.3rem;
-    padding: 0.4rem;
-    border-radius: 0.5rem;
+    max-width: calc(100vw - 0.6em);
+    margin: 0.3em;
+    padding: 0.4em;
+    border-radius: 0.5em;
     line-height: 1.4;
     text-align: center;
     align-items: center;
@@ -368,11 +371,11 @@
     height: 2.33em;
     min-width: 93px;
     max-width: calc(
-      100vw - 0.6rem
+      100vw - 0.6em
     ); // cap the width (just in case `fit-content` is not supported
-    margin: 0.3rem;
-    padding: 0.4rem;
-    border-radius: 0.5rem;
+    margin: 0.3em;
+    padding: 0.4em;
+    border-radius: 0.5em;
     line-height: 1.4;
     text-align: center;
     width: fit-content;
@@ -406,29 +409,18 @@
   }
   .definition-text {
     font-size: 0.9em;
-    margin-top: 0.1rem;
+    margin-top: 0.1em;
   }
 }
 
 /* Tabletish */
 @media screen and (min-width: 48em) and (max-width: 74.99em) {
-  
-  #match-game {
-    font-size: 100%;
-  }
-
+  /* Dynamically scale font */
+  #match-game,
   .term-preview {
-    z-index: 151;
-    min-height: 4.67rem;
-    &.tiles-4,
-    &.tiles-6 {
-      flex-basis: calc(50% - (0.25rem + 0.8rem));
-      height: calc((90vh - (2rem + (6 * .2rem))) / 6);
-    }
-    &.tiles-9 {
-      flex-basis: calc(33% - (0.167rem + 0.8rem));
-      height: calc((90vh - (2rem + (6 * .2rem))) / 6);
-    }
+    font-size: 95%; // For browsers which don't support calc()
+    /* 0.875em(14px) @ 48em(768px) increasing to 1em(16px) @ 75em(1200px) */
+    font-size: calc(0.875rem + ((1vw - 0.48em) * 0.463));
   }
 
   #match-board {
@@ -443,26 +435,39 @@
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.5em;
     margin: 0 auto;
     align-content: center;
     justify-content: center;
-    &.tiles-4,
+    &.tiles-4 {
+      .term,
+      .definition {
+        /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+        flex-basis: calc((100% - 1.8em) / 2);
+        /* (90% vh - (vert. cont. padding * 4) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+        height: calc((90vh - 3.6em) / 4);
+      }
+    }
     &.tiles-6 {
       .term,
       .definition {
-        flex-basis: calc(50% - (0.25rem + 0.4rem));
-        height: calc((90vh - (2rem + (6 * .2rem))) / 6);
+        /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+        flex-basis: calc((100% - 2.2em) / 3);
+        /* (90% vh - (vert. cont. padding * 4) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+        height: calc((90vh - 3.6em) / 4);
       }
     }
     &.tiles-9 {
       .term,
       .definition {
-        flex-basis: calc(33% - (0.167rem + 0.4rem));
-        height: calc((90vh - (2rem + (6 * .2rem))) / 6);
+        /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+        flex-basis: calc((100% - 2.2em) / 3);
+        /* (90% vh - (vert. cont. padding * 4) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+        height: calc((90vh - 4.4em) / 6);
       }
     }
   }
+
   .term,
   .definition,
   .term-preview {
@@ -470,19 +475,21 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: inherit;
-    min-height: 4.67rem;
-    margin: 0.2rem;
-    padding: 0.6rem;
-    border-radius: 0.5rem;
+    min-height: 4.67em;
+    margin: 0.2em;
+    padding: 0.6em;
+    border-radius: 0.5em;
     line-height: 1.4;
     text-align: center;
     overflow: hidden;
   }
+
   .term-text,
   .definition-text,
   .term-preview-text {
     margin: auto;
   }
+
   @supports (-webkit-line-clamp: 4) {
     .term-text,
     .definition-text,
@@ -496,6 +503,7 @@
       text-overflow: ellipsis;
     }
   }
+
   .term-text,
   .term-preview-text {
     font-size: 1.4em;
@@ -503,17 +511,42 @@
     word-break: break-word;
     letter-spacing: 1px;
   }
+
   .definition-text {
     font-size: 1.3em;
+  }
+
+  .term-preview {
+    z-index: 151;
+    min-height: 4.67em;
+    &.tiles-4 {
+      /* (100% parent - (hor. cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+      width: calc((100% - 2.8em) / 2);
+      /* (90% vh - (vert. cont. padding * 4) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      height: calc((90vh - 3.6em) / 4);
+    }
+    &.tiles-6 {
+      /* (100% parent - (hor. cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+      width: calc((100% - 3.2em) / 3);
+      /* (90% vh - (vert. cont. padding * 4) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      height: calc((90vh - 3.6em) / 4);
+    }
+    &.tiles-9 {
+      /* (100% parent - (hor. cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+      width: calc((100% - 3.2em) / 3);
+      /* (90% vh - (vert. cont. padding * 4) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      height: calc((90vh - 4.4em) / 6);
+    }
   }
 }
 
 @media screen and (min-width: 75em) {
-  
   /* Dynamically scale font */
-  #match-game, .term-preview {
-    font-size: 115%; // For browsers which don't support calc()
-    font-size: calc(1rem + ((1vw - 0.75em) * 0.8571));
+  #match-game,
+  .term-preview {
+    font-size: 110%; // For browsers which don't support calc()
+    /* 1em(16px) @ 75em(1200px) increasing to 1.5em(24px) @ 256em(4096px) */
+    font-size: calc(1rem + ((1vw - 0.75em) * 0.2762));
   }
 
   #match-board {
@@ -522,40 +555,44 @@
     grid-template-rows: auto;
   }
 
-   #terms,
-   #definitions {
-     display: flex;
-     flex-direction: row;
-     flex-wrap: wrap;
-     width: 100%;
-     padding: 0.5em;
-     margin: 0 auto;
-     align-content: center;
-     justify-content: center;
-     &.tiles-4 {
-       .term, 
-       .definition {
-         flex-basis: calc(50% - (0.25em + 0.4em));
-         height: calc((90vh - (1em - (.4em * 2))) / 2);
-       }
-     }
-     &.tiles-6 {
-       .term,
-       .definition {
-         flex-basis: calc(50% - (0.25em + 0.4em));
-         height: calc((90vh - (1em - (.4em * 3))) / 3);
-       }
-     }
-     &.tiles-9 {
-       .term,
-       .definition {
-         /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
-         flex-basis: calc((100% - 2.2em) / 3);
-         /* (90% vw - (vert. cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
-         height: calc((90vh - 2.2em) / 3);
-       }
-     }
-   }
+  #terms,
+  #definitions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0.5em;
+    margin: 0 auto;
+    align-content: center;
+    justify-content: center;
+    &.tiles-4 {
+      .term,
+      .definition {
+        /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+        flex-basis: calc((100% - 1.8em) / 2);
+        /* (90% vh - (vert. cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+        height: calc((90vh - 1.8em) / 2);
+      }
+    }
+    &.tiles-6 {
+      .term,
+      .definition {
+        /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+        flex-basis: calc((100% - 2.2em) / 3);
+        /* (90% vh - (vert. cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+        height: calc((90vh - 1.8em) / 2);
+      }
+    }
+    &.tiles-9 {
+      .term,
+      .definition {
+        /* (100% parent - (hor. cont. padding * 2) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+        flex-basis: calc((100% - 2.2em) / 3);
+        /* (90% vh - (vert. cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+        height: calc((90vh - 2.2em) / 3);
+      }
+    }
+  }
 
   .term,
   .definition,
@@ -609,29 +646,30 @@
     z-index: 151;
     min-height: 9.33em;
     &.tiles-4 {
-      flex-basis: calc((50% / 2) - (0.25em + 0.8em));
-      height: calc((90vh - (1em - (.4em * 2))) / 2);
+      /* (50% parent - (hor. inner cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+      width: calc((50% - 2.8em) / 2);
+      /* (90% vh - (vert. inner cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      height: calc((90vh - 1.8em) / 2);
     }
     &.tiles-6 {
-      flex-basis: calc((50% / 2) - (0.25em + 0.8em));
-      height: calc((90vh - (1em - (.4em * 3))) / 3);
+      /* (50% parent - (hor. inner cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
+      width: calc((50% - 3.2em) / 3);
+      /* (90% vh - (vert. inner cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      height: calc((90vh - 1.8em) / 2);
     }
     &.tiles-9 {
-      background-color: yellow !important;
-      color: black;
       /* (50% parent - (hor. inner cont. padding * 4) - ((tile hor. margin * 2) * tiles per row) / tiles per row) */
-      width: calc((50% - 3.2em)  / 3);
-      /* (90% vw - (vert. inner cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
+      width: calc((50% - 3.2em) / 3);
+      /* (90% vh - (vert. inner cont. padding * 2) - ((tile vert. margin * 2) * tiles per col) / tiles per col) */
       height: calc((90vh - 2.2em) / 3);
     }
   }
 
-  #timer {
+  /*#timer {
     width: 6em;
     height: 6em;
     #timer-score {
       font-size: 3em;
     }
-  }
-
+  }*/
 }
