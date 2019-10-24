@@ -5,6 +5,7 @@
 - Client
 
   - CSS / Style
+    - Scale font up to as much as 250% on largest form factor
     - Clean up match and centralized stylesheet
     - Work on making Splash and model scale way up, i.e., remove max- that aren't % or viewport variable based
   - `public`

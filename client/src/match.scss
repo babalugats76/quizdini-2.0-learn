@@ -545,8 +545,8 @@
   #match-game,
   .term-preview {
     font-size: 110%; // For browsers which don't support calc()
-    /* 1em(16px) @ 75em(1200px) increasing to 2em(32px) @ 256em(4096px) */
-    font-size: calc(1rem + ((1vw - 0.75em) * 0.5525));
+    /* 1em(16px) @ 75em(1200px) increasing to 2.5em(40px) @ 240em(3840px) */
+    font-size: calc(1rem + ((1vw - 0.75em) * 0.9091));
   }
 
   #match-board {
