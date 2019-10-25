@@ -3,7 +3,8 @@
 # Todo List
 
 - Client
-
+  - Convert media queries to rems 
+  - Reverse Engineer Model Splash
   - CSS / Style
     - Scale font up to as much as 250% on largest form factor
     - Clean up match and centralized stylesheet
