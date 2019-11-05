@@ -3,7 +3,8 @@
 # Todo List
 
 - Client
-  - Convert media queries to rems 
+
+  - Convert media queries to rems
   - Reverse Engineer Model Splash
   - CSS / Style
     - Scale font up to as much as 250% on largest form factor
@@ -13,13 +14,12 @@
     - Remove unnecessary `manifest.json` file
   - MatchGame
     - Add modern game logo
-  - Figure out new relic configuration for development
 
 - Kay Items
   - Draft RFP for Kay
     - Colors
     - Fonts
-       - Term / Definition / Monospace (When code)
+      - Term / Definition / Monospace (When code)
 
 ## Summary
 
