@@ -1,21 +1,13 @@
-import './quizdini.scss';
+import "./quizdini.scss";
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import reduxThunk from 'redux-thunk';
-import App from './components/App';
-import reducers from './reducers';
-import { BrowserRouter as Router } from 'react-router-dom';
-
-const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
+import { BrowserRouter as Router } from "react-router-dom";
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router>
-      <App />
-    </Router>
-  </Provider>,
-  document.getElementById('quizdini')
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById("quizdini")
 );

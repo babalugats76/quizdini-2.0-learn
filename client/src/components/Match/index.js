@@ -1,90 +1,68 @@
 import "../../match.scss";
 
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import * as actions from "../../actions";
+import React, { useEffect, useMemo } from "react";
+import { useAPI, useData, useTimeout, useTitle } from "../../hooks/";
+import { Loader } from "../UI/";
 import { isEmpty } from "./utils";
-import Loader from "../UI/Loader";
 import MatchGame from "./MatchGame";
 
-const Error = ({ error }) => {
+const Match = props => {
+  // destructure props, e.g., id from router
+  const { match: { params: { id: matchId = null } = {} } = {} } = props;
+
+  // direct API interactions (ephemeral)
+  const { POST: firePing } = useAPI({ url: "/api/ping" });
+
+  // API data
+  const { data: game, error, initialized } = useData({
+    url: "/api/match/" + matchId,
+    deps: [matchId]
+  });
+
+  // timer to show loader
+  const [inDelay, setDelay] = useTimeout(2000);
+
+  // side effect that initiates delay (on mount only)
+  useEffect(() => {
+    setDelay(true);
+  }, [setDelay]);
+
+  // memoized calculation; determines if game not found
+  const notFound = useMemo(() => {
+    return initialized && isEmpty(game);
+  }, [game, initialized]);
+
+  // When to show loader
+  const showLoader = !game || inDelay || !initialized;
+
+  // set page title
+  useTitle({
+    title: showLoader ? "Loading..." : notFound ? "Game Not Found" : game.title,
+    deps: [game, notFound, showLoader]
+  });
+
   return (
-    <div className="error fixed-center">
-      <h1>Error</h1>
-      <div>
-        `${error.status}` - `${error.status}`
-      </div>
+    <div className="full-page purple">
+      {(showLoader && <Loader content="LOADING..." />) ||
+        (notFound && <NotFound id={matchId} />) || (
+          <MatchGame
+            game={game}
+            onPing={results =>
+              firePing({ gameId: matchId, gameType: "M", results })
+            }
+          />
+        )}
     </div>
   );
 };
 
-class Match extends Component {
-  handlePing = this.handlePing.bind(this);
-  constructor(props) {
-    super(props);
-    this.state = {
-      matchId: props.match.params.id || null
-    };
-  }
+export default Match;
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.fetchGame();
-    }, 500);
-  }
-
-  async fetchGame() {
-    const { fetchMatch } = this.props;
-    const { matchId } = this.state;
-    await fetchMatch(matchId);
-    const { matchGame: { game } = {} } = this.props;
-    if (isEmpty(game)) {
-      return setTimeout(() => {
-        this.props.history.push("/404", {
-          message: {
-            header: "Game Not Found...",
-            content: `"${matchId}" is not a valid match game id`
-          }
-        });
-      }, 500);
-    }
-    const { title } = game;
-    const pageTitle = [process.env.REACT_APP_WEBSITE_NAME, title].join(" | ");
-    document.title = pageTitle;
-  }
-
-  async handlePing(results) {
-    console.log("results in handlePing...");
-    console.log(results);
-    const { firePing } = this.props;
-    const { matchId } = this.state;
-    firePing(matchId, "M", results);
-  }
-
-  renderGame({ matchGame }) {
-    const { error, loading, game } = matchGame;
-    if (error) return <Error error={error} />;
-    if (loading || isEmpty(game)) return <Loader content="LOADING..." />;
-    return (
-      <MatchGame game={game} onPing={results => this.handlePing(results)} />
-    );
-  }
-
-  render() {
-    const game = this.renderGame(this.props);
-    return <div className="full-page purple">{game}</div>;
-  }
-}
-
-const mapStateToProps = ({ matchGame, ping }) => ({ matchGame, ping });
-
-Match.propTypes = {
-  location: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+const NotFound = ({ matchId = null }) => {
+  return (
+    <div>
+      <h3>Match Game {matchId}- Not Found</h3>
+      <pre>Details go here...</pre>
+    </div>
+  );
 };
-
-export default connect(
-  mapStateToProps,
-  actions
-)(Match);
