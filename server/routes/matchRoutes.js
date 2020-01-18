@@ -4,6 +4,7 @@ const Match = mongoose.model('matches');
 module.exports = app => {
   app.get('/api/match/:id', async (req, res, next) => {
     try {
+      // throw new Error('Testing match error...');
       let match = await Match.findOne({
         matchId: req.params.id
       }).populate('user_id', 'title firstName lastName author', 'users');

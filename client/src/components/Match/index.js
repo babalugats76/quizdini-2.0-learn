@@ -43,7 +43,8 @@ const Match = props => {
 
   return (
     <div className="full-page purple">
-      {(showLoader && <Loader content="LOADING..." />) ||
+      {(error && <pre>{JSON.stringify(error, null, 4)}</pre>) ||
+        (showLoader && <Loader content="LOADING..." />) ||
         (notFound && <NotFound id={matchId} />) || (
           <MatchGame
             game={game}
