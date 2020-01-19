@@ -48,9 +48,7 @@ const Match = props => {
         (notFound && <NotFound id={matchId} />) || (
           <MatchGame
             game={game}
-            onPing={results =>
-              firePing({ gameId: matchId, gameType: "M", results })
-            }
+            onPing={results => firePing({ gameId: matchId, gameType: "M", results })}
           />
         )}
     </div>
