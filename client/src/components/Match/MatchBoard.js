@@ -38,7 +38,7 @@ const MatchBoard = props => {
           appear={true}
           in={term.show}
           key={term.id}
-          onExited={(id, type) => onExited(term.id, 'term')}
+          onExited={(id, exitType) => onExited(term.id, 'term')}
           timeout={timeout}
           transitionStyles={transitionStyles}
           unmountOnExit={false}
@@ -90,7 +90,7 @@ const MatchBoard = props => {
           in={def.show}
           key={def.id}
           mountOnEnter={true}
-          onExited={(id, type) => onExited(def.id, 'definition')}
+          onExited={(id, exitType) => onExited(def.id, 'definition')}
           timeout={timeout}
           transitionStyles={transitionStyles}
           unmountOnExit={false}

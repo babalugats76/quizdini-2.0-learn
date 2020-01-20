@@ -1,6 +1,5 @@
 import React from 'react';
-import Modal from '../UI/Modal';
-import Icon from '../UI/SVG';
+import { Modal, SVG as Icon } from "../UI/";
 //import logo from "../../../src/logo.svg";
 
 const MatchSplash = ({
