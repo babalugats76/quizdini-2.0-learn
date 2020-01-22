@@ -1,14 +1,12 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import PropTypes from "prop-types";
-import { DndProvider } from "react-dnd";
+import { DndProvider, DragLayer, DragSource, DropTarget } from "react-dnd";
 import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
-import HTML5Backend from "react-dnd-html5-backend";
+import HTML5Backend, { getEmptyImage } from "react-dnd-html5-backend";
 import TouchBackend from "react-dnd-touch-backend";
 import shortid from "shortid";
+import { GameTransition, Modal, SVG as Icon } from "../UI/";
 import { addColor, shuffleArray } from "./utils";
-import MatchBoard from "./MatchBoard";
-import MatchDragLayer from "./MatchDragLayer";
-import MatchSplash from "./MatchSplash";
 import Timer from "./Timer";
 
 const CustomHTML5toTouch = {
@@ -25,7 +23,7 @@ const CustomHTML5toTouch = {
   ]
 };
 
-function init({ colorScheme, onPing, itemsPerBoard, matches }) {
+function initMatch({ colorScheme, onPing, itemsPerBoard, matches }) {
   const matchBank = matches.map(match => ({ ...match, id: shortid.generate() }));
   return {
     colorScheme, // color scheme (from props)
@@ -154,6 +152,8 @@ function matchReducer(state, action) {
  * ```
  */
 
+const MatchDispatch = React.createContext(null);
+
 const MatchGame = props => {
   // destructure props
   const {
@@ -171,7 +171,7 @@ const MatchGame = props => {
   const [state, dispatch] = useReducer(
     matchReducer,
     { colorScheme, itemsPerBoard, matches, onPing },
-    init
+    initMatch
   );
 
   const {
@@ -202,64 +202,53 @@ const MatchGame = props => {
     return () => newRound && clearTimeout(newRound);
   }, [rounds]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     console.log(JSON.stringify(state, null, 3));
-  }, [state]);
+  }, [state]); */
 
   return (
     <DndProvider backend={MultiBackend} options={CustomHTML5toTouch}>
-      <MatchDragLayer />
-      <MatchSplash
-        author={author}
-        correct={correct}
-        duration={duration}
-        incorrect={incorrect}
-        instructions={instructions}
-        itemsPerBoard={itemsPerBoard}
-        onGameStart={() => {
-          dispatch({ type: "START" });
-          setTimeout(() => {
-            // short timeout before showing board
-            dispatch({ type: "SHOW_BOARD", show: true });
-          }, 1000);
-        }}
-        score={score}
-        showResults={showResults}
-        showSplash={showSplash}
-        termCount={termCount}
-        title={title}
-      />
-      <div id="match-game">
-        <MatchBoard
-          definitions={definitions}
+      <MatchDispatch.Provider value={dispatch}>
+        <MatchSplash
+          author={author}
+          correct={correct}
+          duration={duration}
+          incorrect={incorrect}
+          instructions={instructions}
           itemsPerBoard={itemsPerBoard}
-          onDrop={results => {
-            dispatch({ type: "DROP", drop: results });
-          }}
-          onExited={(id, exitType) => {
-            dispatch({ type: "EXIT", id, exitType });
-          }}
-          onRoundStart={() => dispatch({ type: "DEAL" })}
-          playing={playing}
-          show={showBoard}
-          terms={terms}
-          wait={500}
+          score={score}
+          showResults={showResults}
+          showSplash={showSplash}
+          termCount={termCount}
+          title={title}
         />
-        {!showSplash && (
-          <Timer
-            correct={correct}
-            duration={duration}
-            incorrect={incorrect}
-            score={score}
-            onTimerStart={() => dispatch({ type: "PLAYING", playing: true })}
-            onTimerEnd={() => {
-              dispatch({ type: "PLAYING", playing: false });
-              setTimeout(() => dispatch({ type: "GAME_OVER" }), 1000); // short timeout before showing results
-            }}
-            wait={300}
+        <div id="match-game">
+          <MatchDragLayer />
+          <MatchBoard
+            definitions={definitions}
+            itemsPerBoard={itemsPerBoard}
+            playing={playing}
+            show={showBoard}
+            terms={terms}
+            wait={500}
           />
-        )}
-      </div>
+          {!showSplash && (
+            <Timer
+              correct={correct}
+              duration={duration}
+              incorrect={incorrect}
+              interval={100}
+              score={score}
+              onTimerStart={() => dispatch({ type: "PLAYING", playing: true })}
+              onTimerEnd={() => {
+                dispatch({ type: "PLAYING", playing: false });
+                setTimeout(() => dispatch({ type: "GAME_OVER" }), 1000); // short timeout before showing results
+              }}
+              wait={300}
+            />
+          )}
+        </div>
+      </MatchDispatch.Provider>
     </DndProvider>
   );
 };
@@ -270,3 +259,422 @@ MatchGame.propTypes = {
 };
 
 export default MatchGame;
+
+const layerStyles = {
+  position: "fixed",
+  pointerEvents: "none",
+  zIndex: 150,
+  left: 0,
+  top: 0,
+  width: "100%",
+  height: "100%"
+};
+
+function getItemStyles(props) {
+  const { initialOffset, currentOffset } = props;
+  if (!initialOffset || !currentOffset) {
+    return {
+      display: "none"
+    };
+  }
+  let { x, y } = currentOffset;
+  const transform = `translate(${x}px, ${y}px)`;
+  return {
+    transform,
+    WebkitTransform: transform
+  };
+}
+
+const MatchDragLayer = DragLayer(monitor => ({
+  item: monitor.getItem(),
+  itemType: monitor.getItemType(),
+  initialOffset: monitor.getInitialSourceClientOffset(),
+  currentOffset: monitor.getSourceClientOffset(),
+  isDragging: monitor.isDragging()
+}))(props => {
+  const { item, isDragging } = props;
+
+  /* Hide preview */
+  if (!isDragging) {
+    return null;
+  }
+
+  return (
+    <div style={layerStyles}>
+      <div style={getItemStyles(props)}>
+        <TermPreview {...item} />
+      </div>
+    </div>
+  );
+});
+
+const TermPreview = ({ term, itemsPerBoard, ...rest }) => {
+  const previewClasses = []
+    .concat("term-preview", itemsPerBoard ? [`tiles-${itemsPerBoard}`] : [])
+    .join(" ")
+    .trim();
+
+  const renderHtml = value => {
+    return { __html: value.replace(/(^")|("$)/g, "") };
+  };
+
+  return (
+    term && (
+      <div className={previewClasses}>
+        <div className="term-preview-text" dangerouslySetInnerHTML={renderHtml(term)}></div>
+      </div>
+    )
+  );
+};
+
+const MatchSplash = ({
+  author,
+  duration,
+  instructions,
+  itemsPerBoard,
+  score,
+  showResults,
+  showSplash,
+  termCount,
+  title
+}) => {
+  const dispatch = useContext(MatchDispatch);
+
+  const onGameStart = () => {
+    dispatch({ type: "START" });
+    setTimeout(() => {
+      // short timeout before showing board
+      dispatch({ type: "SHOW_BOARD", show: true });
+    }, 1000);
+  };
+
+  return (
+    <Modal handleClose={onGameStart} show={showSplash}>
+      <div id="splash">
+        <section id="splash-banner">
+          <img
+            className="game-banner"
+            src="https://loremflickr.com/900/250"
+            alt="Awesome Quizdini Match Banner Goes Here..."
+          />
+        </section>
+        <section id="splash-details">
+          <div className="title">{title}</div>
+          <div className="author">{author}</div>
+          {showResults && (
+            <div id="score">
+              <span className="circle">
+                <span className="circle-text">{score}</span>
+              </span>
+            </div>
+          )}
+          {!showResults && (
+            <div id="options">
+              <span className="term-count">
+                <Icon name="archive" />
+                {termCount} terms
+              </span>
+              <span className="items-per-board">
+                <Icon name="grid" />
+                {itemsPerBoard} per board
+              </span>
+              <span className="duration">
+                <Icon name="watch" />
+                {duration} seconds
+              </span>
+            </div>
+          )}
+          {!showResults && <div className="instructions">{instructions}</div>}
+        </section>
+        <section id="splash-footer">
+          <button id="play" onClick={onGameStart} onKeyPress={onGameStart} tabIndex={1}>
+            {showResults ? "Play Again" : "Play Game"}
+          </button>
+        </section>
+      </div>
+    </Modal>
+  );
+};
+
+const MatchBoard = props => {
+  const dispatch = useContext(MatchDispatch);
+
+  const onDrop = results => dispatch({ type: "DROP", drop: results });
+  const onExited = (id, exitType) => dispatch({ type: "EXIT", id, exitType });
+  const onRoundStart = () => dispatch({ type: "DEAL" });
+
+  const renderTerms = ({ itemsPerBoard, playing, terms, wait }) => {
+    return terms.map((term, idx) => {
+      /* Dynamically determine enter/exit transition times, i.e., achieve brick-laying effect */
+      const timeout = {
+        enter: ((idx + 1) / terms.length) * wait,
+        exit: wait
+      };
+
+      /* Define object for the following states: 'default', 'entering', 'entered', 'exiting', 'exited' */
+      const transitionStyles = {
+        default: { opacity: 0, visibility: "hidden" },
+        entering: { opacity: 0, visibility: "hidden" },
+        entered: {
+          transition: `visibility 0ms linear ${timeout.enter}ms, opacity ${timeout.enter}ms linear`,
+          opacity: 1.0,
+          visibility: "visible"
+        },
+        exiting: {},
+        exited: { opacity: 0 }
+      };
+
+      /* Return the terms, wrapped in transitions */
+      return (
+        <GameTransition
+          appear={true}
+          in={term.show}
+          key={term.id}
+          onExited={() => onExited(term.id, "term")}
+          timeout={timeout}
+          transitionStyles={transitionStyles}
+          unmountOnExit={false}
+          mountOnEnter={true}
+        >
+          <Term
+            canDrag={playing}
+            color={term.color}
+            definition={term.definition}
+            id={term.id}
+            itemsPerBoard={itemsPerBoard}
+            matched={term.matched}
+            onDrop={onDrop}
+            show={term.show}
+            term={term.term}
+          />
+        </GameTransition>
+      );
+    });
+  };
+
+  const renderDefinitions = ({ definitions, wait }) => {
+    return definitions.map((def, idx) => {
+      const timeout = {
+        enter: ((idx + 1) / definitions.length) * wait,
+        exit: wait
+      };
+
+      const transitionStyles = {
+        default: { opacity: 0 },
+        entering: { opacity: 0 },
+        entered: {
+          transition: `opacity ${timeout.enter}ms cubic-bezier(.17,.67,.83,.67)`,
+          opacity: 1.0,
+          visibility: "visible"
+        },
+        exiting: {
+          transition: `opacity ${timeout.exit}ms cubic-bezier(.17,.67,.83,.67)`,
+          opacity: 1.0,
+          visibility: "visible"
+        },
+        exited: { opacity: 0, color: "#FFFFFF", borderColor: "#FFFFFF" }
+      };
+
+      /* Return the terms, wrapped in transitions */
+      return (
+        <GameTransition
+          appear={true}
+          in={def.show}
+          key={def.id}
+          mountOnEnter={true}
+          onExited={() => onExited(def.id, "definition")}
+          timeout={timeout}
+          transitionStyles={transitionStyles}
+          unmountOnExit={false}
+        >
+          <Definition
+            definition={def.definition}
+            id={def.id}
+            matched={def.matched}
+            show={def.show}
+            term={def.term}
+          />
+        </GameTransition>
+      );
+    });
+  };
+
+  const { itemsPerBoard, show, wait } = props;
+  const terms = renderTerms({ ...props });
+  const definitions = renderDefinitions({ ...props });
+
+  /* Transition timeouts */
+  const timeout = {
+    enter: wait / itemsPerBoard,
+    exit: wait / itemsPerBoard
+  };
+
+  /* Define object for the following states: 'default', 'entering', 'entered', 'exiting', 'exited' */
+  const transitionStyles = {
+    default: { opacity: 0 },
+    entering: { opacity: 0 },
+    entered: {
+      transition: `all ${timeout.enter}ms cubic-bezier(.17,.67,.83,.67)`,
+      opacity: 1.0
+    },
+    exiting: {
+      transition: `all ${timeout.exit}ms cubic-bezier(.17,.67,.83,.67)`,
+      opacity: 0.1
+    },
+    exited: { opacity: 0 }
+  };
+
+  const tileClass = `tiles-${itemsPerBoard}`;
+
+  return (
+    <GameTransition
+      appear={true}
+      in={show}
+      mountOnEnter={false}
+      onEnter={onRoundStart}
+      timeout={timeout}
+      transitionStyles={transitionStyles}
+      unmountOnExit={true}
+    >
+      <div id="match-board">
+        <div id="terms" className={tileClass}>
+          {terms}
+        </div>
+        <div id="definitions" className={tileClass}>
+          {definitions}
+        </div>
+      </div>
+    </GameTransition>
+  );
+};
+
+const termSource = {
+  canDrag(props, monitor) {
+    return props.canDrag;
+  },
+
+  beginDrag(props) {
+    return { ...props };
+  },
+
+  endDrag(props, monitor) {
+    if (monitor.didDrop()) {
+      return props.onDrop(monitor.getDropResult());
+    }
+  }
+};
+
+function termCollect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+function getStyles({ style, isDragging }) {
+  // Combine existing style object with dragging-specific logic
+  return { ...style, ...(isDragging && { opacity: 0 }) };
+}
+
+const Term = DragSource(
+  "Match",
+  termSource,
+  termCollect
+)(
+  ({
+    color,
+    connectDragPreview,
+    connectDragSource,
+    isDragging,
+    matched,
+    show,
+    style, // *important* - contains inline style from GameTransition
+    term
+  }) => {
+    /***
+     * Side effect which replaces traditional HTML5 ghost image with blank image.
+     * Runs once (on mount); dependencies not important--include lint rule.
+     */
+    useEffect(
+      () => {
+        connectDragPreview &&
+          connectDragPreview(getEmptyImage(), {
+            captureDraggingState: true
+          });
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      []
+    );
+
+    const renderHtml = value => ({ __html: value.replace(/(^")|("$)/g, "") });
+
+    const termClasses = []
+      .concat(
+        "term",
+        isDragging ? ["dragging"] : [],
+        !show ? ["exiting"] : [],
+        matched ? ["matched"] : [],
+        color
+      )
+      .join(" ")
+      .trim();
+
+    return connectDragSource(
+      <div style={getStyles({ style, isDragging })} className={termClasses}>
+        <div className="term-text" dangerouslySetInnerHTML={renderHtml(term)}></div>
+      </div>
+    );
+  }
+);
+
+const definitionTarget = {
+  drop(props, monitor, component) {
+    console.log("drop...");
+    const item = monitor.getItem();
+    const matched = item.definition === props.definition ? true : false;
+    return {
+      matched: matched,
+      termId: item.id,
+      definitionId: props.id,
+      //id: item.id,
+      term: item.term,
+      definition: props.definition
+    };
+  }
+};
+
+function definitionCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    isOverCurrent: monitor.isOver({ shallow: true }),
+    canDrop: monitor.canDrop(),
+    itemType: monitor.getItemType()
+  };
+}
+
+const Definition = DropTarget(
+  "Match",
+  definitionTarget,
+  definitionCollect
+)(({ canDrop, connectDropTarget, definition, isOver, matched, show, style }) => {
+  const renderHtml = value => {
+    return { __html: value.replace(/(^")|("$)/g, "") };
+  };
+
+  const definitionClasses = []
+    .concat(
+      "definition",
+      isOver && canDrop ? ["is-over"] : [],
+      !show ? ["exiting"] : [],
+      matched ? ["matched"] : []
+    )
+    .join(" ")
+    .trim();
+
+  return connectDropTarget(
+    <div style={style} className={definitionClasses}>
+      <div className="definition-text" dangerouslySetInnerHTML={renderHtml(definition)}></div>
+    </div>
+  );
+});

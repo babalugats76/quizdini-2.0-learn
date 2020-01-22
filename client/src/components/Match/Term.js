@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { DragSource } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend';
+import React, { useEffect } from "react";
+import { DragSource } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
 
 const termSource = {
   canDrag(props, monitor) {
@@ -31,47 +31,49 @@ function getStyles({ style, isDragging }) {
   return { ...style, ...(isDragging && { opacity: 0 }) };
 }
 
-class Term extends Component {
-  componentDidMount() {
-    const { connectDragPreview } = this.props;
-    if (connectDragPreview) {
-      connectDragPreview(getEmptyImage(), {
-        captureDraggingState: true
-      });
-    }
-  }
+const Term = ({
+  color,
+  connectDragPreview,
+  connectDragSource,
+  isDragging,
+  matched,
+  show,
+  style, // *important* - contains inline style from GameTransition
+  term
+}) => {
 
-  renderHtml = (value) => {
-    return {__html: value.replace(/(^")|("$)/g, '')};
-  };
+  /***
+   * Side effect which replaces traditional HTML5 ghost image with blank image.
+   * Runs once (on mount); dependencies not important--include lint rule.
+   */
+  useEffect(
+    () => {
+      connectDragPreview &&
+        connectDragPreview(getEmptyImage(), {
+          captureDraggingState: true
+        });
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
-  render() {
-    const {
-      color,
-      connectDragSource,
-      matched,
-      show,
-      style, // *important* - contains inline style from GameTransition
-      term,
-      isDragging
-    } = this.props;
+  const renderHtml = value => ({ __html: value.replace(/(^")|("$)/g, "") });
 
-    const termClasses = []
-      .concat(
-        'term',
-        isDragging ? ['dragging'] : [],
-        !show ? ['exiting'] : [],
-        matched ? ['matched'] : [],
-        color
-      )
-      .join(' ')
-      .trim();
-    return connectDragSource(
-      <div style={getStyles({style, isDragging})} className={termClasses}>
-        <div className="term-text" dangerouslySetInnerHTML={this.renderHtml(term)}></div>
-      </div>
-    );
-  }
-}
+  const termClasses = []
+    .concat(
+      "term",
+      isDragging ? ["dragging"] : [],
+      !show ? ["exiting"] : [],
+      matched ? ["matched"] : [],
+      color
+    )
+    .join(" ")
+    .trim();
 
-export default DragSource('Match', termSource, collect)(Term);
+  return connectDragSource(
+    <div style={getStyles({ style, isDragging })} className={termClasses}>
+      <div className="term-text" dangerouslySetInnerHTML={renderHtml(term)}></div>
+    </div>
+  );
+};
+
+export default DragSource("Match", termSource, collect)(Term);
