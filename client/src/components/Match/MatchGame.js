@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useReducer, useRef } from "react";
+import React, { useContext, useEffect, useReducer, useRef } from "react";
 import PropTypes from "prop-types";
 import { DndProvider, DragLayer, DragSource, DropTarget } from "react-dnd";
 import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
@@ -30,21 +30,17 @@ function initMatch({ colorScheme, itemsPerBoard, matches }) {
     colorScheme, // color scheme (from props)
     correct: 0, // correct matches
     definitions: [], // Definitions (on game board)
+    games: 0, // Number of games completed
     incorrect: 0, // incorrect matches
     itemsPerBoard, // items per board (from props)
     matches, // Matches defined by teacher (plus additional fields)
     playing: false, // Whether game is currently being played
     score: 0, // Points earned thus far
+    results: [], // Results from game play, i.e., hit/miss, by term
+    rounds: 0, // Number of rounds completed (boards cleared)
     showBoard: false, // Whether to show board
     showScore: false, // Whether to show score on Splash, i.e., at least one game played
     showSplash: true, // Whether to show splash screen
-    results: [
-      {
-        term: "agile",
-        hit: 100,
-        miss: 50
-      }
-    ], // Results from game play, i.e., hit/miss, by term
     termCount: matches.length, // Total # terms, i.e., matches
     terms: [], // Terms (on game board)
     unmatched: 0 // # terms still to match (on current game board)
@@ -73,14 +69,33 @@ function matchReducer(state, action) {
       return { ...state, terms, definitions, unmatched: definitions.length };
     }
     case "DROP": {
-      let correct, incorrect, score, unmatched; // local variables
+      const { itemsPerBoard } = state; // prevState
+      let correct, filtered, incorrect, results, rounds, score, unmatched; // local variables
       const { definitionId, matched, term, termId } = action.drop; // dropResult
+      filtered = state.results.filter(res => res.term === term); // lookup dropped term's results
+      if (!filtered.length) {
+        // if found
+        results = state.results.concat({ term, hit: matched ? 1 : 0, miss: matched ? 0 : 1 }); // combine old data with new object
+      } else {
+        // if not found
+        results = state.results.map(res => {
+          if (res.term === term) {
+            return {
+              term: res.term,
+              hit: matched ? res.hit + 1 : res.hit,
+              miss: matched ? res.miss : res.miss + 1
+            };
+          }
+          return res;
+        }); // build new array; update original and preserve others
+      }
+
       if (matched) {
-        console.log(term, "hit");
         // if successful match
         correct = state.correct + 1; // increment correct
         score = state.score + 1; // increment score
         unmatched = state.unmatched - 1; // decrement unmatched
+        rounds = Math.floor(correct / itemsPerBoard); // calculate completed rounds
         const terms = state.terms.map(term => {
           term.show = term.id === termId ? false : term.show;
           term.matched = term.id === termId ? true : term.matched;
@@ -91,18 +106,11 @@ function matchReducer(state, action) {
           def.matched = def.id === definitionId ? true : def.matched;
           return def;
         });
-
-        const results = state.results.filter((res) => {
-          return res.term === term
-        });
-        console.log(JSON.stringify(results, null, 4));
-
-        return { ...state, correct, definitions, score, terms, unmatched };
+        return { ...state, correct, definitions, results, rounds, score, terms, unmatched };
       }
-      console.log(term, "miss");
       incorrect = state.incorrect + 1; // increment incorrect
       score = Math.max(state.score - 1, 0); // decrement score (floor of 0)
-      return { ...state, incorrect, score };
+      return { ...state, results, incorrect, score };
     }
     case "EXIT": {
       let terms, definitions; // terms and definitions (to remove from)
@@ -128,6 +136,7 @@ function matchReducer(state, action) {
     case "GAME_OVER": {
       return {
         ...state,
+        games: state.games + 1,
         showSplash: true,
         showScore: true
       }; // show score/splash
@@ -145,6 +154,8 @@ function matchReducer(state, action) {
         incorrect: 0,
         matched: [],
         playing: true,
+        results: [],
+        rounds: 0,
         score: 0,
         showBoard: true,
         showSplash: false
@@ -191,8 +202,11 @@ const MatchGame = props => {
   const {
     correct,
     definitions,
+    games,
     incorrect,
     playing,
+    results,
+    rounds,
     score,
     showBoard,
     showSplash,
@@ -201,25 +215,23 @@ const MatchGame = props => {
     termCount
   } = state;
 
-  const ref = useRef();
-  const rounds = useMemo(() => Math.floor(correct / itemsPerBoard), [correct, itemsPerBoard]);
-  const gameOver = useMemo(() => !playing && showScore, [playing, showScore]);
+  const resultRef = useRef(); // tracks current value of results (for ping)
 
   useEffect(() => {
-    ref.current = { correct, incorrect, score };
-  }, [correct, incorrect, score]);
+    resultRef.current = { correct, incorrect, data: results, score };
+  }, [correct, incorrect, results, score]);
 
   useEffect(() => {
     rounds && dispatch({ type: "DEAL" });
   }, [dispatch, rounds]);
 
   useEffect(() => {
-    if (gameOver) onPing(ref.current); // fire ping to record game results
-  }, [gameOver, onPing]);
+    games && onPing(resultRef.current);
+  }, [games, onPing]);
 
-  /*useEffect(() => {
+/*   useEffect(() => {
     console.log(JSON.stringify(state, null, 3));
-  }, [state]);*/
+  }, [state]); */
 
   return (
     <DndProvider backend={MultiBackend} options={CustomHTML5toTouch}>
