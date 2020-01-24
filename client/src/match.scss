@@ -107,9 +107,21 @@
       border-radius: 10px;
       border: none;
       outline: none;
-      transition: background-color 300ms linear;
+      transition: background-color 500ms ease-in-out;
       text-transform: uppercase;
       letter-spacing: 1px;
+      &:hover {
+        background-color: yellow;
+       // transition: background-color 500ms ease;
+      }
+      &:focus {
+        background-color: green;
+      //  transition: background-color 500ms ease;
+      }
+      &:active {
+        background-color: blue;
+       // transition: background-color 500ms ease;
+      }
     }
   }
 }

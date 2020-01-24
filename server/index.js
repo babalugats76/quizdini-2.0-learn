@@ -12,10 +12,13 @@ require('./models/Match'); // Used in match routes, etc.
 require('./models/Ping'); // Used in ping routes, etc.
 
 mongoose.connect(keys.mongoURI, {
-  useNewUrlParser: true,
-  useFindAndModify: false,
+  connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
+  poolSize: 10,
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
   useCreateIndex: true,
-  useUnifiedTopology: true
+  useFindAndModify: false,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 const app = express();

@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useMemo, useReducer, useRef } from "react";
 import PropTypes from "prop-types";
 import { DndProvider, DragLayer, DragSource, DropTarget } from "react-dnd";
 import MultiBackend, { TouchTransition } from "react-dnd-multi-backend";
 import HTML5Backend, { getEmptyImage } from "react-dnd-html5-backend";
 import TouchBackend from "react-dnd-touch-backend";
+import { CircularProgressbar } from "react-circular-progressbar";
 import shortid from "shortid";
+import { useInterval, usePrevious } from "../../hooks/";
 import { GameTransition, Modal, SVG as Icon } from "../UI/";
 import { addColor, shuffleArray } from "./utils";
-import Timer from "./Timer";
 
 const CustomHTML5toTouch = {
   backends: [
@@ -23,23 +24,28 @@ const CustomHTML5toTouch = {
   ]
 };
 
-function initMatch({ colorScheme, onPing, itemsPerBoard, matches }) {
-  const matchBank = matches.map(match => ({ ...match, id: shortid.generate() }));
+function initMatch({ colorScheme, itemsPerBoard, matches }) {
+  // const matchBank = matches.map(match => ({ ...match, id: shortid.generate() }));
   return {
     colorScheme, // color scheme (from props)
     correct: 0, // correct matches
     definitions: [], // Definitions (on game board)
-    onPing, // function to call at end of game
     incorrect: 0, // incorrect matches
     itemsPerBoard, // items per board (from props)
-    matchBank: matchBank, // Matches defined by teacher (plus additional fields)
+    matches, // Matches defined by teacher (plus additional fields)
     playing: false, // Whether game is currently being played
-    rounds: 0, // Number of complete rounds played (used to trigger round transitions)
     score: 0, // Points earned thus far
-    showBoard: false, // Show/hide game board
-    showResults: false, // Show/hide score
-    showSplash: true, // Show/hide splash screen
-    termCount: matchBank.length, // Total # terms in "bank" of matches
+    showBoard: false, // Whether to show board
+    showScore: false, // Whether to show score on Splash, i.e., at least one game played
+    showSplash: true, // Whether to show splash screen
+    results: [
+      {
+        term: "agile",
+        hit: 100,
+        miss: 50
+      }
+    ], // Results from game play, i.e., hit/miss, by term
+    termCount: matches.length, // Total # terms, i.e., matches
     terms: [], // Terms (on game board)
     unmatched: 0 // # terms still to match (on current game board)
   };
@@ -54,11 +60,11 @@ function initMatch({ colorScheme, onPing, itemsPerBoard, matches }) {
 function matchReducer(state, action) {
   switch (action.type) {
     case "DEAL": {
-      const { colorScheme, itemsPerBoard, matchBank } = state; // prevState
-      const shuffled = shuffleArray(matchBank); // Shuffle all available matches
+      const { colorScheme, itemsPerBoard, matches } = state; // prevState
+      const shuffled = shuffleArray(matches); // Shuffle all available matches
       const sliced = shuffled.slice(0, Math.min(itemsPerBoard, shuffled.length)); // Grab subset (based on itemsPerBoard)
       let terms = sliced.map(match => {
-        return { ...match, show: true, matched: false };
+        return { ...match, id: shortid.generate(), matched: false, show: true };
       }); // Add additional properties
       let definitions = [...terms]; // Clone definitions (from terms)
       terms = addColor(terms, colorScheme); // Add colors (terms only)
@@ -68,73 +74,81 @@ function matchReducer(state, action) {
     }
     case "DROP": {
       let correct, incorrect, score, unmatched; // local variables
-      const { definitionId, matched, termId } = action.drop; // dropResult
+      const { definitionId, matched, term, termId } = action.drop; // dropResult
       if (matched) {
+        console.log(term, "hit");
         // if successful match
         correct = state.correct + 1; // increment correct
         score = state.score + 1; // increment score
         unmatched = state.unmatched - 1; // decrement unmatched
-        /**
-         * Mark term/def matched and hide
-         * If board is cleared (unmatched < 1) hide all terms/defs
-         */
         const terms = state.terms.map(term => {
-          term.show = term.id === termId || unmatched < 1 ? false : term.show;
+          term.show = term.id === termId ? false : term.show;
           term.matched = term.id === termId ? true : term.matched;
           return term;
         });
         const definitions = state.definitions.map(def => {
-          def.show = def.id === definitionId || unmatched < 1 ? false : def.show;
+          def.show = def.id === definitionId ? false : def.show;
           def.matched = def.id === definitionId ? true : def.matched;
           return def;
         });
+
+        const results = state.results.filter((res) => {
+          return res.term === term
+        });
+        console.log(JSON.stringify(results, null, 4));
+
         return { ...state, correct, definitions, score, terms, unmatched };
       }
+      console.log(term, "miss");
       incorrect = state.incorrect + 1; // increment incorrect
       score = Math.max(state.score - 1, 0); // decrement score (floor of 0)
       return { ...state, incorrect, score };
     }
     case "EXIT": {
-      let roundOver = false; // whether round is over
       let terms, definitions; // terms and definitions (to remove from)
       const { id, exitType } = action; // id = id of exiting item; type = what exited, e.g., term, definition
       switch (exitType) {
         case "term": // if a term is exiting
           terms = state.terms.filter(term => term.id !== id);
           if (terms && terms.length) terms = shuffleArray(terms);
-          roundOver =
-            terms && terms.length === 0 && state.definitions && state.definitions.length === 0;
           break;
         case "definition": // if a definition is exiting
           definitions = state.definitions.filter(def => def.id !== id);
           if (definitions && definitions.length) definitions = shuffleArray(definitions);
-          roundOver =
-            definitions && definitions.length === 0 && state.terms && state.terms.length === 0;
           break;
         default:
           break;
       }
       return {
         ...state, // prevState
-        showBoard: roundOver ? false : state.showBoard, // if end of round, hide board
-        rounds: roundOver ? state.rounds + 1 : state.rounds, // if end of round, increment `rounds`
         ...(definitions && { definitions }), // if a definition is exiting, include updated version
         ...(terms && { terms }) // if a term is exiting, include updated version
       };
     }
     case "GAME_OVER": {
-      const { correct, incorrect, onPing, score } = state; // prevState
-      onPing({ correct, incorrect, score }); // fire ping to record game results
-      return { ...state, showResults: true, showSplash: true }; // show score/splash
+      return {
+        ...state,
+        showSplash: true,
+        showScore: true
+      }; // show score/splash
     }
     case "PLAYING": {
-      return { ...state, playing: action.playing }; // active/deactivate game play
+      return { ...state, playing: action.playing };
     }
     case "SHOW_BOARD": {
-      return { ...state, showBoard: action.show }; // toggle transition of game board
+      return { ...state, showBoard: action.show };
     }
     case "START": {
-      return { ...state, correct: 0, incorrect: 0, score: 0, showBoard: false, showSplash: false }; // initialize/reinitialize key values (to start game)
+      return {
+        ...state,
+        correct: 0,
+        incorrect: 0,
+        matched: [],
+        playing: true,
+        score: 0,
+        showBoard: true,
+        showSplash: false
+      }; // initialize/reinitialize key values (to start game)
     }
     default:
       return state;
@@ -170,7 +184,7 @@ const MatchGame = props => {
 
   const [state, dispatch] = useReducer(
     matchReducer,
-    { colorScheme, itemsPerBoard, matches, onPing },
+    { colorScheme, itemsPerBoard, matches },
     initMatch
   );
 
@@ -179,35 +193,37 @@ const MatchGame = props => {
     definitions,
     incorrect,
     playing,
-    rounds,
     score,
     showBoard,
-    showResults,
     showSplash,
+    showScore,
     terms,
     termCount
   } = state;
 
-  /***
-   * Side effect to manage round transitions.
-   * `rounds` is incremented for each board that is cleared.
-   * Avoids setting timeouts and performing nested state setting inside `matchReducer`
-   */
-  useEffect(() => {
-    const newRound =
-      rounds &&
-      setTimeout(() => {
-        dispatch({ type: "SHOW_BOARD", show: true }); // initiates `MatchBoard` transition
-      }, 1000);
-    return () => newRound && clearTimeout(newRound);
-  }, [rounds]);
+  const ref = useRef();
+  const rounds = useMemo(() => Math.floor(correct / itemsPerBoard), [correct, itemsPerBoard]);
+  const gameOver = useMemo(() => !playing && showScore, [playing, showScore]);
 
-  /* useEffect(() => {
+  useEffect(() => {
+    ref.current = { correct, incorrect, score };
+  }, [correct, incorrect, score]);
+
+  useEffect(() => {
+    rounds && dispatch({ type: "DEAL" });
+  }, [dispatch, rounds]);
+
+  useEffect(() => {
+    if (gameOver) onPing(ref.current); // fire ping to record game results
+  }, [gameOver, onPing]);
+
+  /*useEffect(() => {
     console.log(JSON.stringify(state, null, 3));
-  }, [state]); */
+  }, [state]);*/
 
   return (
     <DndProvider backend={MultiBackend} options={CustomHTML5toTouch}>
+      <MatchDragLayer />
       <MatchDispatch.Provider value={dispatch}>
         <MatchSplash
           author={author}
@@ -217,13 +233,12 @@ const MatchGame = props => {
           instructions={instructions}
           itemsPerBoard={itemsPerBoard}
           score={score}
-          showResults={showResults}
+          showScore={showScore}
           showSplash={showSplash}
           termCount={termCount}
           title={title}
         />
         <div id="match-game">
-          <MatchDragLayer />
           <MatchBoard
             definitions={definitions}
             itemsPerBoard={itemsPerBoard}
@@ -232,21 +247,15 @@ const MatchGame = props => {
             terms={terms}
             wait={500}
           />
-          {!showSplash && (
-            <Timer
-              correct={correct}
-              duration={duration}
-              incorrect={incorrect}
-              interval={100}
-              score={score}
-              onTimerStart={() => dispatch({ type: "PLAYING", playing: true })}
-              onTimerEnd={() => {
-                dispatch({ type: "PLAYING", playing: false });
-                setTimeout(() => dispatch({ type: "GAME_OVER" }), 1000); // short timeout before showing results
-              }}
-              wait={300}
-            />
-          )}
+          <Timer
+            correct={correct}
+            duration={duration}
+            incorrect={incorrect}
+            interval={100}
+            playing={playing}
+            score={score}
+            wait={300}
+          />
         </div>
       </MatchDispatch.Provider>
     </DndProvider>
@@ -285,7 +294,7 @@ function getItemStyles(props) {
   };
 }
 
-const MatchDragLayer = DragLayer(monitor => ({
+const MatchDragLayer = DragLayer((monitor, props) => ({
   item: monitor.getItem(),
   itemType: monitor.getItemType(),
   initialOffset: monitor.getInitialSourceClientOffset(),
@@ -293,11 +302,7 @@ const MatchDragLayer = DragLayer(monitor => ({
   isDragging: monitor.isDragging()
 }))(props => {
   const { item, isDragging } = props;
-
-  /* Hide preview */
-  if (!isDragging) {
-    return null;
-  }
+  if (!isDragging) return null; // hide preview
 
   return (
     <div style={layerStyles}>
@@ -308,7 +313,7 @@ const MatchDragLayer = DragLayer(monitor => ({
   );
 });
 
-const TermPreview = ({ term, itemsPerBoard, ...rest }) => {
+const TermPreview = ({ term, itemsPerBoard }) => {
   const previewClasses = []
     .concat("term-preview", itemsPerBoard ? [`tiles-${itemsPerBoard}`] : [])
     .join(" ")
@@ -333,20 +338,26 @@ const MatchSplash = ({
   instructions,
   itemsPerBoard,
   score,
-  showResults,
+  showScore,
   showSplash,
   termCount,
   title
 }) => {
   const dispatch = useContext(MatchDispatch);
 
+  const playRef = useRef(null);
+
   const onGameStart = () => {
+    dispatch({ type: "DEAL" });
     dispatch({ type: "START" });
-    setTimeout(() => {
-      // short timeout before showing board
-      dispatch({ type: "SHOW_BOARD", show: true });
-    }, 1000);
   };
+
+  useEffect(() => {
+    showSplash &&
+      setTimeout(() => {
+        playRef.current.focus();
+      }, 1000);
+  }, [showSplash]);
 
   return (
     <Modal handleClose={onGameStart} show={showSplash}>
@@ -361,14 +372,14 @@ const MatchSplash = ({
         <section id="splash-details">
           <div className="title">{title}</div>
           <div className="author">{author}</div>
-          {showResults && (
+          {showScore && (
             <div id="score">
               <span className="circle">
                 <span className="circle-text">{score}</span>
               </span>
             </div>
           )}
-          {!showResults && (
+          {!showScore && (
             <div id="options">
               <span className="term-count">
                 <Icon name="archive" />
@@ -384,11 +395,17 @@ const MatchSplash = ({
               </span>
             </div>
           )}
-          {!showResults && <div className="instructions">{instructions}</div>}
+          {!showScore && <div className="instructions">{instructions}</div>}
         </section>
         <section id="splash-footer">
-          <button id="play" onClick={onGameStart} onKeyPress={onGameStart} tabIndex={1}>
-            {showResults ? "Play Again" : "Play Game"}
+          <button
+            id="play"
+            onClick={onGameStart}
+            onKeyPress={onGameStart}
+            tabIndex={1}
+            ref={playRef}
+          >
+            {showScore ? "Play Again" : "Play Game"}
           </button>
         </section>
       </div>
@@ -399,9 +416,8 @@ const MatchSplash = ({
 const MatchBoard = props => {
   const dispatch = useContext(MatchDispatch);
 
-  const onDrop = results => dispatch({ type: "DROP", drop: results });
+  const onDrop = drop => dispatch({ type: "DROP", drop });
   const onExited = (id, exitType) => dispatch({ type: "EXIT", id, exitType });
-  const onRoundStart = () => dispatch({ type: "DEAL" });
 
   const renderTerms = ({ itemsPerBoard, playing, terms, wait }) => {
     return terms.map((term, idx) => {
@@ -531,7 +547,6 @@ const MatchBoard = props => {
       appear={true}
       in={show}
       mountOnEnter={false}
-      onEnter={onRoundStart}
       timeout={timeout}
       transitionStyles={transitionStyles}
       unmountOnExit={true}
@@ -566,6 +581,7 @@ const termSource = {
 
 function termCollect(connect, monitor) {
   return {
+    canDrag: monitor.canDrag(),
     connectDragSource: connect.dragSource(),
     connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
@@ -583,6 +599,7 @@ const Term = DragSource(
   termCollect
 )(
   ({
+    canDrag,
     color,
     connectDragPreview,
     connectDragSource,
@@ -678,3 +695,150 @@ const Definition = DropTarget(
     </div>
   );
 });
+
+function initTimer({ duration, interval }) {
+  return {
+    active: false,
+    duration,
+    initialized: false,
+    interval,
+    secondsLeft: 0,
+    showTransition: false,
+    success: false
+  };
+}
+
+function timerReducer(state, action) {
+  switch (action.type) {
+    case "COUNTDOWN": {
+      const secondsLeft = state.secondsLeft - state.interval / 1000;
+      const active = secondsLeft >= 0 ? true : false;
+      return { ...state, active, secondsLeft };
+    }
+    case "START":
+      console.log("starting timer...");
+      return {
+        ...state,
+        active: true,
+        initialized: true,
+        secondsLeft: state.duration,
+        showBoard: true,
+        showTransition: false
+      };
+    case "TRANSITION":
+      return { ...state, showTransition: action.show, success: action.success };
+    default:
+      return state;
+  }
+}
+
+const Timer = ({ correct, duration, incorrect, interval, playing, score, wait }) => {
+  const matchDispatch = useContext(MatchDispatch);
+  const [state, dispatch] = useReducer(timerReducer, { duration, interval }, initTimer);
+  const { active, initialized, secondsLeft, showTransition, success } = state;
+
+  const prevCorrect = usePrevious(correct, 0);
+  const prevIncorrect = usePrevious(incorrect, 0);
+
+  useEffect(
+    () => {
+      if (correct !== prevCorrect || incorrect !== prevIncorrect) {
+        const success = correct > prevCorrect ? true : false;
+        dispatch({ type: "TRANSITION", show: true, success });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [correct, incorrect]
+  );
+
+  useEffect(() => {
+    playing && dispatch({ type: "START" });
+  }, [playing]);
+
+  useEffect(() => {
+    if (initialized && !active) {
+      matchDispatch({ type: "PLAYING", playing: false });
+      setTimeout(() => matchDispatch({ type: "GAME_OVER" }), 2000);
+    }
+  }, [active, initialized, matchDispatch]);
+
+  useInterval(() => dispatch({ type: "COUNTDOWN" }), active ? interval : null);
+
+  /*   useEffect(() => {
+    console.log(JSON.stringify(state, null, 4));
+  }, [state]); */
+
+  const transitionStyles = {
+    default: { opacity: 1.0 },
+    entering: {
+      transition: `transform cubic-bezier(1, 0, 0, 1)`,
+      transform: "scale(1, 1)"
+    },
+    entered: { transform: "scale(1, 1)", opacity: 1.0 },
+    exiting: {
+      transition: `transform cubic-bezier(1, 0, 0, 1)`,
+      transform: "scale(1.02, 1.02)",
+      opacity: 1.0
+    },
+    exited: { opacity: 0.95 }
+  };
+
+  const classes = {
+    root: "timer",
+    path: "timer-path",
+    trail: "timer-trail",
+    background: "timer-background",
+    text: "timer-text"
+  };
+
+  const colors = {
+    GREEN: "#1fe73f",
+    YELLOW: "#ffe119",
+    RED: "#e6194b"
+  };
+
+  const percent = Math.ceil(((duration - secondsLeft) / duration) * 100);
+  const progressColor = percent <= 70 ? colors.GREEN : percent <= 85 ? colors.YELLOW : colors.RED;
+
+  return (
+    <>
+      {playing && (
+        <GameTransition
+          mountOnEnter={false}
+          unmountOnExit={false}
+          appear={true}
+          in={!showTransition}
+          timeout={wait}
+          transitionStyles={transitionStyles}
+          onExited={() => dispatch({ type: "TRANSITION", show: false })}
+        >
+          <div id="timer">
+            <div className="timer-wrapper">
+              <div className="progress-bar-wrapper">
+                <CircularProgressbar
+                  background
+                  classes={classes}
+                  counterClockwise
+                  value={percent}
+                  strokeWidth={4}
+                  styles={{
+                    trail: {
+                      stroke: progressColor,
+                      visibility: showTransition ? "hidden" : "visible"
+                    },
+                    background: {
+                      fill: showTransition ? (success ? colors.GREEN : colors.RED) : undefined
+                    }
+                  }}
+                />
+              </div>
+              <div className="timer-score-wrapper">
+                <div id="timer-score">{score.toString()}</div>
+              </div>
+            </div>
+          </div>
+        </GameTransition>
+      )}
+    </>
+  );
+};

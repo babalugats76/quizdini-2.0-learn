@@ -83,7 +83,7 @@ export default function useData({ url, deps = [] }) {
   const get = useCallback(async () => {
     try {
       dispatch({ type: "BEGIN" });
-      const res = await axios.get(url);
+      const res = await axios.get(url, { timeout: 30000 });
       const { data } = res;
       dispatch({ type: "SUCCESS", data });
       return { data };
