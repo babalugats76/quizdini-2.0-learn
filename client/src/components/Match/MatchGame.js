@@ -137,6 +137,7 @@ function matchReducer(state, action) {
       return {
         ...state,
         games: state.games + 1,
+        playing: false,
         showSplash: true,
         showScore: true
       }; // show score/splash
@@ -229,7 +230,7 @@ const MatchGame = props => {
     games && onPing(resultRef.current);
   }, [games, onPing]);
 
-/*   useEffect(() => {
+  /*   useEffect(() => {
     console.log(JSON.stringify(state, null, 3));
   }, [state]); */
 
@@ -611,7 +612,7 @@ const Term = DragSource(
   termCollect
 )(
   ({
-    canDrag,
+    // canDrag,
     color,
     connectDragPreview,
     connectDragSource,
@@ -658,7 +659,7 @@ const Term = DragSource(
 
 const definitionTarget = {
   drop(props, monitor, component) {
-    console.log("drop...");
+    // console.log("drop...");
     const item = monitor.getItem();
     const matched = item.definition === props.definition ? true : false;
     return {
@@ -710,22 +711,25 @@ const Definition = DropTarget(
 
 function initTimer({ duration, interval }) {
   return {
-    active: false,
-    duration,
-    initialized: false,
-    interval,
-    secondsLeft: 0,
-    showTransition: false,
-    success: false
+    active: false, // whether timer is actively counting down
+    duration, // seconds (to countdown from)
+    initialized: false, // whether timer has started
+    interval, // millisecond intervals of each countdown reduction
+    progress: 0, // % of countdown complete thus far
+    showTransition: false, // whether to show timer transition
+    success: false, // whether last user attempt was successful (or not)
+    remaining: 0 // seconds left on timer
   };
 }
 
 function timerReducer(state, action) {
   switch (action.type) {
     case "COUNTDOWN": {
-      const secondsLeft = state.secondsLeft - state.interval / 1000;
-      const active = secondsLeft >= 0 ? true : false;
-      return { ...state, active, secondsLeft };
+      const { duration, interval } = state; // prevState
+      const remaining = state.remaining - interval / 1000; // local variables
+      const progress = Math.ceil(((duration - remaining) / duration) * 100);
+      const active = remaining >= 0 ? true : false;
+      return { ...state, active, progress, remaining };
     }
     case "START":
       console.log("starting timer...");
@@ -733,9 +737,10 @@ function timerReducer(state, action) {
         ...state,
         active: true,
         initialized: true,
-        secondsLeft: state.duration,
-        showBoard: true,
-        showTransition: false
+        progress: 0,
+        remaining: state.duration,
+        showTransition: false,
+        success: true
       };
     case "TRANSITION":
       return { ...state, showTransition: action.show, success: action.success };
@@ -747,10 +752,13 @@ function timerReducer(state, action) {
 const Timer = ({ correct, duration, incorrect, interval, playing, score, wait }) => {
   const matchDispatch = useContext(MatchDispatch);
   const [state, dispatch] = useReducer(timerReducer, { duration, interval }, initTimer);
-  const { active, initialized, secondsLeft, showTransition, success } = state;
-
+  const { active, initialized, progress, showTransition, success } = state;
   const prevCorrect = usePrevious(correct, 0);
   const prevIncorrect = usePrevious(incorrect, 0);
+
+  useEffect(() => {
+    playing && dispatch({ type: "START" });
+  }, [playing]);
 
   useEffect(
     () => {
@@ -762,10 +770,6 @@ const Timer = ({ correct, duration, incorrect, interval, playing, score, wait })
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [correct, incorrect]
   );
-
-  useEffect(() => {
-    playing && dispatch({ type: "START" });
-  }, [playing]);
 
   useEffect(() => {
     if (initialized && !active) {
@@ -780,7 +784,22 @@ const Timer = ({ correct, duration, incorrect, interval, playing, score, wait })
     console.log(JSON.stringify(state, null, 4));
   }, [state]); */
 
+  /* Define object for the following states: 'default', 'entering', 'entered', 'exiting', 'exited' */
   const transitionStyles = {
+    default: { opacity: 0 },
+    entering: { opacity: 0 },
+    entered: {
+      transition: `all ${wait}ms cubic-bezier(.17,.67,.83,.67)`,
+      opacity: 1.0
+    },
+    exiting: {
+      transition: `all ${wait}ms cubic-bezier(.17,.67,.83,.67)`,
+      opacity: 0.1
+    },
+    exited: { opacity: 0 }
+  };
+
+  const progressStyles = {
     default: { opacity: 1.0 },
     entering: {
       transition: `transform cubic-bezier(1, 0, 0, 1)`,
@@ -789,7 +808,7 @@ const Timer = ({ correct, duration, incorrect, interval, playing, score, wait })
     entered: { transform: "scale(1, 1)", opacity: 1.0 },
     exiting: {
       transition: `transform cubic-bezier(1, 0, 0, 1)`,
-      transform: "scale(1.02, 1.02)",
+      transform: "scale(1.05, 1.05)",
       opacity: 1.0
     },
     exited: { opacity: 0.95 }
@@ -809,48 +828,52 @@ const Timer = ({ correct, duration, incorrect, interval, playing, score, wait })
     RED: "#e6194b"
   };
 
-  const percent = Math.ceil(((duration - secondsLeft) / duration) * 100);
-  const progressColor = percent <= 70 ? colors.GREEN : percent <= 85 ? colors.YELLOW : colors.RED;
+  const progressColor = progress <= 70 ? colors.GREEN : progress <= 85 ? colors.YELLOW : colors.RED;
 
   return (
-    <>
-      {playing && (
+    <GameTransition
+      appear={false}
+      in={playing}
+      mountOnEnter={false}
+      timeout={wait}
+      transitionStyles={transitionStyles}
+      unmountOnExit={false}
+    >
+      <div id="timer">
         <GameTransition
+          appear={false}
           mountOnEnter={false}
           unmountOnExit={false}
-          appear={true}
           in={!showTransition}
           timeout={wait}
-          transitionStyles={transitionStyles}
+          transitionStyles={progressStyles}
           onExited={() => dispatch({ type: "TRANSITION", show: false })}
         >
-          <div id="timer">
-            <div className="timer-wrapper">
-              <div className="progress-bar-wrapper">
-                <CircularProgressbar
-                  background
-                  classes={classes}
-                  counterClockwise
-                  value={percent}
-                  strokeWidth={4}
-                  styles={{
-                    trail: {
-                      stroke: progressColor,
-                      visibility: showTransition ? "hidden" : "visible"
-                    },
-                    background: {
-                      fill: showTransition ? (success ? colors.GREEN : colors.RED) : undefined
-                    }
-                  }}
-                />
-              </div>
-              <div className="timer-score-wrapper">
-                <div id="timer-score">{score.toString()}</div>
-              </div>
+          <div className="timer-wrapper">
+            <div className="progress-bar-wrapper">
+              <CircularProgressbar
+                background
+                classes={classes}
+                counterClockwise
+                value={progress}
+                strokeWidth={4}
+                styles={{
+                  trail: {
+                    stroke: progressColor,
+                    visibility: showTransition ? "hidden" : "visible"
+                  },
+                  background: {
+                    fill: showTransition ? (success ? colors.GREEN : colors.RED) : undefined
+                  }
+                }}
+              />
+            </div>
+            <div className="timer-score-wrapper">
+              <div id="timer-score">{score.toString()}</div>
             </div>
           </div>
         </GameTransition>
-      )}
-    </>
+      </div>
+    </GameTransition>
   );
 };
