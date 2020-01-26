@@ -3,7 +3,7 @@
 # Todo List
 
 - Client
-
+  - Convert `MatchGame` into individual files; import `MatchDispatch` context where appropriate.
   - Convert media queries to rems
   - Reverse Engineer Model Splash
   - CSS / Style
