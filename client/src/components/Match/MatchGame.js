@@ -216,23 +216,22 @@ const MatchGame = props => {
     termCount
   } = state;
 
-  const resultRef = useRef(); // tracks current value of results (for ping)
-
-  useEffect(() => {
-    resultRef.current = { correct, incorrect, data: results, score };
-  }, [correct, incorrect, results, score]);
-
+  // Side effect which handles "new round" logic
   useEffect(() => {
     rounds && dispatch({ type: "DEAL" });
   }, [dispatch, rounds]);
 
+  const resultRef = useRef(); // tracks current value of result-related state
+
+  // Side effect which keeps track of game results (in a ref)
+  useEffect(() => {
+    resultRef.current = { correct, incorrect, data: results, score };
+  }, [correct, incorrect, results, score]);
+
+  // Side effect which ping server with game results
   useEffect(() => {
     games && onPing(resultRef.current);
   }, [games, onPing]);
-
-  /*   useEffect(() => {
-    console.log(JSON.stringify(state, null, 3));
-  }, [state]); */
 
   return (
     <DndProvider backend={MultiBackend} options={CustomHTML5toTouch}>
@@ -713,7 +712,7 @@ function initTimer({ duration, interval }) {
   return {
     active: false, // whether timer is actively counting down
     duration, // seconds (to countdown from)
-    initialized: false, // whether timer has started
+    initialized: false, // whether timer has begun
     interval, // millisecond intervals of each countdown reduction
     progress: 0, // % of countdown complete thus far
     showTransition: false, // whether to show timer transition
@@ -735,7 +734,7 @@ function timerReducer(state, action) {
       console.log("starting timer...");
       return {
         ...state,
-        active: true,
+        complete: false,
         initialized: true,
         progress: 0,
         remaining: state.duration,
@@ -749,17 +748,35 @@ function timerReducer(state, action) {
   }
 }
 
+/**
+ * Timer component.
+ *
+ * To debug:
+ * ```
+ *  useEffect(() => {
+ *     console.log(JSON.stringify(state, null, 3));
+ *  }, [state]);
+ * ```
+ */
+
 const Timer = ({ correct, duration, incorrect, interval, playing, score, wait }) => {
   const matchDispatch = useContext(MatchDispatch);
   const [state, dispatch] = useReducer(timerReducer, { duration, interval }, initTimer);
   const { active, initialized, progress, showTransition, success } = state;
-  const prevCorrect = usePrevious(correct, 0);
-  const prevIncorrect = usePrevious(incorrect, 0);
 
+  // Side effect which starts the timer
   useEffect(() => {
     playing && dispatch({ type: "START" });
   }, [playing]);
 
+  // Side effect which manages timer's countdown
+  useInterval(() => dispatch({ type: "COUNTDOWN" }), active ? interval : null);
+
+  // Previous values (needed for hit/miss)
+  const prevCorrect = usePrevious(correct, 0);
+  const prevIncorrect = usePrevious(incorrect, 0);
+
+  // Side effect that triggers hit/miss transitions
   useEffect(
     () => {
       if (correct !== prevCorrect || incorrect !== prevIncorrect) {
@@ -777,12 +794,6 @@ const Timer = ({ correct, duration, incorrect, interval, playing, score, wait })
       setTimeout(() => matchDispatch({ type: "GAME_OVER" }), 2000);
     }
   }, [active, initialized, matchDispatch]);
-
-  useInterval(() => dispatch({ type: "COUNTDOWN" }), active ? interval : null);
-
-  /*   useEffect(() => {
-    console.log(JSON.stringify(state, null, 4));
-  }, [state]); */
 
   /* Define object for the following states: 'default', 'entering', 'entered', 'exiting', 'exited' */
   const transitionStyles = {
