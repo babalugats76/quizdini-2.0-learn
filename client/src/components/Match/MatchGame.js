@@ -734,6 +734,7 @@ function timerReducer(state, action) {
       console.log("starting timer...");
       return {
         ...state,
+        active: true,
         complete: false,
         initialized: true,
         progress: 0,
