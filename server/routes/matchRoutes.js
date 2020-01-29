@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const Match = mongoose.model('matches');
 
-module.exports = app => {
+module.exports = (app, memcache) => {
   app.get('/api/match/:id', async (req, res, next) => {
     try {
       // throw new Error('Testing match error...');
+      const matchTry = memcache.get(`match-${req.params.id}`);
+      console.log(matchTry);
       let match = await Match.findOne({
         matchId: req.params.id
       }).populate('user_id', 'title firstName lastName author', 'users');

@@ -3,13 +3,15 @@ const sslRedirect = require('heroku-ssl-redirect');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+//const cors = require('cors');
 const keys = require('./config/keys');
 const errorHandler = require('./middlewares/errorHandler');
 
 require('./models/User'); // Used in match routes, etc.
 require('./models/Match'); // Used in match routes, etc.
 require('./models/Ping'); // Used in ping routes, etc.
+
+const memcache = require("./services/memcache")(keys);
 
 mongoose.connect(keys.mongoURI, {
   connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
@@ -29,7 +31,7 @@ app.use(sslRedirect());
 //app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 
-require('./routes/matchRoutes')(app);
+require('./routes/matchRoutes')(app, memcache);
 require('./routes/pingRoutes')(app);
 
 app.use(errorHandler); // Custom default, i.e., catch-all, error handler middleware
