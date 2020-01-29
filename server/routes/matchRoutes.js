@@ -6,7 +6,7 @@ module.exports = (app, memcache) => {
     try {
       // throw new Error('Testing match error...');
       const matchTry = memcache.get(`match-${req.params.id}`);
-      console.log(matchTry);
+      console.log(`match-${req.params.id}`, matchTry);
       let match = await Match.findOne({
         matchId: req.params.id
       }).populate('user_id', 'title firstName lastName author', 'users');
