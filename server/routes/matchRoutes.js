@@ -5,7 +5,7 @@ module.exports = (app, memcache) => {
   app.get('/api/match/:id', async (req, res, next) => {
     try {
       // throw new Error('Testing match error...');
-      const matchTry = memcache.get(`match-${req.params.id}`);
+      const matchTry = await memcache.get(`match-${req.params.id}`);
       console.log(`match-${req.params.id}`, matchTry);
       let match = await Match.findOne({
         matchId: req.params.id
