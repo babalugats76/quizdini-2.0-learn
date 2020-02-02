@@ -3,15 +3,12 @@
 # Todo List
 
 - Client
-  - Convert `MatchGame` into individual files; import `MatchDispatch` context where appropriate.
   - Convert media queries to rems
   - Reverse Engineer Model Splash
   - CSS / Style
     - Scale font up to as much as 250% on largest form factor
     - Clean up match and centralized stylesheet
     - Work on making Splash and model scale way up, i.e., remove max- that aren't % or viewport variable based
-  - `public`
-    - Remove unnecessary `manifest.json` file
   - MatchGame
     - Add modern game logo
 
