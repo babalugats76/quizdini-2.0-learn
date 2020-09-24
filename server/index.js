@@ -3,7 +3,7 @@ const sslRedirect = require('heroku-ssl-redirect');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-//const cors = require('cors');
+const cors = require('cors');
 const keys = require('./config/keys');
 const errorHandler = require('./middlewares/errorHandler');
 
@@ -28,7 +28,12 @@ const app = express();
 // enable ssl redirect
 app.use(sslRedirect());
 
-//app.use(cors());
+/*var corsOptions = {
+  origin: 'http://example.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}*/
+
+app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 
 require('./routes/matchRoutes')(app, memcache);
