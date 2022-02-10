@@ -6,7 +6,7 @@
     "axios": "^0.19.1",
     "flatted": "^2.0.1",
     "http-proxy-middleware": "^0.20.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "react": "^16.12.0",
     "react-circular-progressbar": "^2.0.3",
     "react-dnd": "^9.5.1",
